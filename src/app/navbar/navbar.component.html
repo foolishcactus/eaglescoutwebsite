@@ -1,0 +1,20 @@
+<p-menubar>
+    <ng-template pTemplate="start">
+        <a [routerLink]="['/']" class="logo">
+          <img src="../../assets/images/eaglerankpatch.png" alt="Logo" class="logo-image">
+          <span class="website-name">Eagle Endeavors</span>
+        </a>
+    </ng-template>
+
+    <ng-template pTemplate="end">
+        <div class = "p-menuitem-wrapper">
+            <a [routerLink]="['/resources']" class="p-menuitem-link">Resources</a>
+            <a [routerLink]="['/guide']" class="p-menuitem-link">Guide</a>
+            <a [routerLink]="['/projectfinder']" class="p-menuitem-link">Project Finder</a>
+            <a [routerLink]="['/showcase']" class="p-menuitem-link">Showcase</a>
+            <a [routerLink]="['/apply']" class="p-menuitem-link">Apply</a>
+            <a [routerLink]="['/login']" class="p-menuitem-link">Login</a>
+        </div>
+        
+    </ng-template>
+</p-menubar>

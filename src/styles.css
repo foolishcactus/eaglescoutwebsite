@@ -1,1 +1,28 @@
 /* You can add global styles to this file, and also import other style files */
+body{
+    margin: 0;
+    background-color: #f4f3f2;
+}
+
+html {
+    font-size: 10px;
+  }
+
+  .header-text{
+    color: #003366;
+    font-size: 4rem;
+    font-weight: 900;
+    font-family: 'Roboto', sans-serif;
+  }
+
+  .body-text{
+    font-size: 1.75rem;
+    font-weight: 600;
+    font-family: 'Nunito', sans-serif;
+  }
+
+  .subheader-text{
+    font-size: 2.5rem;
+    font-weight: 700;
+    font-family: 'Roboto', sans-serif;
+  }
