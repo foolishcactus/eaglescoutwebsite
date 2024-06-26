@@ -5,6 +5,7 @@ import { GuideComponent } from './guide/guide.component';
 import { ProjectfinderComponent } from './projectfinder/projectfinder.component';
 import { ApplyComponent } from './apply/apply.component';
 import { LoginComponent } from './login/login.component';
+import { UserDashboardComponent } from './user-dashboard/user-dashboard.component';
 
 
 export const routes: Routes = [
@@ -14,5 +15,6 @@ export const routes: Routes = [
     {path: 'guide', component: GuideComponent},
     {path: 'projectfinder', component: ProjectfinderComponent},
     {path: 'apply', component: ApplyComponent},
-    {path: 'login', component: LoginComponent}
+    {path: 'login', component: LoginComponent},
+    { path: 'user-dashboard', component: UserDashboardComponent }
 ];

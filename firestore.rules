@@ -1,0 +1,10 @@
+rules_version = '2';
+
+service cloud.firestore {
+  match /databases/{database}/documents {
+    // Match any document in the 'organizations' collection
+    match /organizations/{document=**} {
+      allow read, write: if true;
+    }
+  }
+}

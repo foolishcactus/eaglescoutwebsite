@@ -1,6 +1,59 @@
-<div class="landing-container">
+<div class = "main-container">
+    <p-toast></p-toast>
 
-    <div class="landing-content">
-      <h1>APPLY</h1>
+    <div class = "right-side">
+        
+        <p class = "head">Register <br> Today</p>
+        <p class = "body">The first step in posting your organization's projects and connecting with dedicated Eagle Scouts ready to make a positive impact in your community.</p>
+        <p class = "body">To ensure the safety of our Scouts and the legitimacy of the projects, all submitted information will be processed manually for verification. You will receive a confirmation email once your submission has been sent.</p>
+        <p class = "body">Thank you for your patience and commitment to providing valuable opportunities for our Scouts.</p>
+    </div>
+
+    <div class = "left-side">
+        <form [formGroup] = "applyForm" style = "height: 100%; display: flex; flex-direction: column; justify-content: space-evenly;">
+            <div>
+                <p class = "header-text" style = "margin: 0; text-align: center;">
+                    Organization Application
+                </p>
+
+                <p class = "body-text" style = "margin: 0; text-align: center;">
+                    Fill this form completely
+                </p>
+            </div>
+
+            <div style = "display: flex; flex-direction: column;">
+                <p-iconField  iconPosition="left">
+                    <p-inputIcon styleClass="pi pi-id-card" />
+                    <input id = "organizationname" class = "inputfield" pInputText type="text" formControlName="organizationname" placeholder="Organization Name" />
+                </p-iconField>
+
+                <p-iconField  iconPosition="left">
+                    <p-inputIcon styleClass="pi pi-map" />
+                    <input id = "address" class = "inputfield" pInputText type="text" formControlName="address" placeholder="Organization Address" />
+                </p-iconField>
+
+                <p-iconField  iconPosition="left">
+                    <p-inputIcon styleClass="pi pi-envelope" />
+                    <input id = "email" class = "inputfield" pInputText type="text" formControlName="email" placeholder="Organization/Representative Email" />
+                </p-iconField>
+
+                <textarea 
+                id="float-input" 
+                rows="5" cols="30" 
+                pInputTextarea
+                formControlName = "description"
+                placeholder="Brief description of Organization. Include things like Who you guys serve? Your mission? etc."
+                >
+                </textarea>
+                    
+            </div>
+
+            <div>
+                <button class = "inputfield submitButton" [ngStyle]="{'background-color': applyForm.invalid ? '#f4f3f2' : '#003366', 'color': applyForm.invalid ? 'black' : 'white' }" (click) = "register()" pButton label="Submit" [disabled]="applyForm.invalid"></button>
+                <p class = "body-text" style = "font-size: 1.2rem; margin:0; width: 100%; text-align: center;">Already have an account? Click <a [routerLink]="['/login']">here</a> to Login</p>    
+            </div>
+
+        </form>
+
     </div>
 </div>

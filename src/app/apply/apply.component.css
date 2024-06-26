@@ -1,30 +1,84 @@
-.landing-container {
-    position: relative;
-    height: 20vh;
-  }
-  
-  .landing-container::before {
-    content: '';
-    position: absolute;
-    width: 100%;
-    height: 100%;
-    background: url('../../assets/images/applyback.jpg') no-repeat center center;
-    background-size: cover;
+.main-container{
+  background-color: #003366;
+  height: 92vh;
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
 
-    filter: brightness(20%);
-  }
-  
-  /* Center the landing content */
-  .landing-content {
-    position: absolute;
-    top: 40%;
-    left: 47%;
-    color: white;
-  }
-  
-  /* Style the heading */
-  .landing-content h1 {
-    font-size: 4.8rem;
-    margin: 0;
-    font-family: 'Roboto', sans-serif;
-  }
+.right-side{
+  height: 70vh;
+  width: 40vw;
+  background-color: #003366;
+  padding: 3rem;
+}
+
+.left-side{
+  height: 70vh;
+  width: 40vw;
+  background-color: white;
+  border-radius: 5rem;
+  padding: 5rem;
+}
+
+.subhead{
+  font-size: 2rem;
+  color: #FF7F50;
+  font-family: 'Roboto', sans-serif;
+  font-weight: 600;
+  margin: 0;
+}
+
+.head{
+  font-size: 10rem;
+  color: white;
+  font-family: Helvetica, sans-serif;
+  font-weight: 600;
+  margin: 0;
+  letter-spacing: 0.1rem;
+  color: #EF4443;
+  margin-bottom: 2rem;
+}
+
+.body{
+  font-size: 1.6rem;
+  color: white;
+  font-family: 'Roboto', sans-serif;
+  font-weight: 400;
+  margin-top: 1rem;
+}
+
+.inputfield{
+  width: 100%;
+  padding-top: 1.5rem;
+  padding-bottom: 1.5rem;
+  font-size: 1.2rem;
+  border-radius: 1.5rem;
+  margin-bottom: 1vh;
+}
+
+#float-input{
+  width: 100%;
+  border-radius: 1.5rem; 
+  font-size: 1.2rem;
+}
+
+.submitButton{
+  font-weight: 800;
+  font-size: 1.5rem;
+  font-family: 'Nunito', sans-serif;
+  border-radius: 1rem;
+  border: none;
+  margin-bottom: 1vh;
+}
+
+.registerButton{
+  color: #003366;
+  background-color: #f4f3f2;
+  border: #f4f3f2;
+  border-radius: 1rem;
+  font-weight: 800;
+  font-size: 1.5rem;
+  font-family: 'Nunito', sans-serif;
+}
