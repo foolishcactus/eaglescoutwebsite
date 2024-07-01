@@ -35,14 +35,6 @@ export class ApplyComponent {
       description: ['', [Validators.required, Validators.minLength(1)]],
       
     })
-
-    this.applyForm.statusChanges.subscribe((status:any) => {
-      if (status === 'VALID') {
-        console.log('Form is valid');
-      } else if (status === 'INVALID') {
-        console.log('Form is invalid');
-      }
-    });
   }
 
   ngOninit(){
@@ -50,39 +42,25 @@ export class ApplyComponent {
   }
 
   register(){
-    if(this.applyForm.valid){
 
-      const organizationData = {
-        name: this.applyForm.value.organizationname,
-        address: this.applyForm.value.address,
-        email: this.applyForm.value.email,
-        description: this.applyForm.value.description,
-        isVerified: false,
-      }
+  if (this.applyForm.valid){
 
-      this.fireBaseService.registerOrganization(this.applyForm.value.email , 'Password123').then(() => {
-        console.log('Registration successful and verification email sent.')
-        this.fireBaseService.addOrganization(organizationData, organizationData.email);
-        this.messageService.add({severity:'success', summary: 'Success', detail: 'Form submission is successful. Please check your email for a confirmation email.'});
-      }).catch((error) =>{
-        console.error('Registration failed:', error)
-
-        if (error.code === 'auth/email-already-in-use') {
-          this.messageService.add({
-            severity:'error',
-            summary: 'Registration Failed',
-            detail: 'The email address is already in use.'
-          });
-        }
-
-      
-      });
-    
-      this.applyForm.reset();
-    }else{
-      this.applyForm.reset();
-      this.messageService.add({severity:'error', summary: 'Error', detail: 'Form submission is unsuccessful. Please try again.'});
+    const organizationData = {
+      name: this.applyForm.value.organizationname,
+      address: this.applyForm.value.address,
+      email: this.applyForm.value.email,
+      description: this.applyForm.value.description,
     }
+
+    this.fireBaseService.addOrganization(organizationData).subscribe(
+      response =>{
+        console.log("Organization addedd successfully: " + response);
+      },
+      error => {
+        console.error('COMPONENT ERRROR IN APPLY COMPONENT' + error);
+      }
+    )
+  }
   }
   
 }

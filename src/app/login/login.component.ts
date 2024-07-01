@@ -36,29 +36,30 @@ export class LoginComponent {
   }
 
   signIn() {
-    if (this.emailForm.valid) {
-      const { email, password } = this.emailForm.value;
+  if (this.emailForm.valid) {
+    const { email, password } = this.emailForm.value;
 
-      this.fireBaseService.login(email, password)
-      .then((result) => {
-        console.log("The following user has just logged in" + result.user);
+    this.fireBaseService.login(email, password)
+    .then((result) => {
+      console.log("The following user has just logged in" + result.user);
 
-        this.router.navigate(['user-dashboard']);
-      })
-      .catch((error) => {
-        this.emailForm.reset();
-        console.error('Login error: ' + error);
+      this.router.navigate(['user-dashboard']);
+    })
+    .catch((error) => {
+      this.emailForm.reset();
+      console.error('Login error: ' + error);
 
-        this.messageService.add({
-          severity:'error',
-          summary: 'Login Failed',
-          detail: 'Try Again'
-        });
-      })
+      //Present Error Toast
+      this.messageService.add({
+        severity:'error',
+        summary: 'Login Failed',
+        detail: 'Try Again'
+      });
+    })
 
-    } else {
-      console.log('Invalid Form');
-    }
+  } else {
+    console.log('Invalid Form');
+  }
 
 
   }
