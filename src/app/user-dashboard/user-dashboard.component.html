@@ -1,1 +1,25 @@
-<p>user-dashboard works!</p>
+
+<div *ngIf="this.firebaseService.currentUser | async as user">
+    <!-- Display user info -->
+
+    <div class = "primaryContainer">
+        <div class = "animatedBackground">
+            <div class="orgSummary">
+                <p>{{currentOrganization?.name}}</p>
+                <p>{{currentOrganization?.street}}</p>
+                <p>{{currentOrganization?.city}}</p>
+                <p>{{currentOrganization?.state}}</p>
+                <p>{{currentOrganization?.zipcode}}</p>
+                <p>{{currentOrganization?.description}}</p>
+            </div>
+        </div>
+        <div class = "postSummary">
+
+        </div>
+    </div>
+    <p>Welcome, {{ user.displayName }}</p>
+    <p>Email: {{ user.email }}</p>
+
+    <button (click) = "show()">Show</button>
+    <button (click) = "logout()">Logout</button>
+</div>

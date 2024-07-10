@@ -29,8 +29,20 @@
 
                 <p-iconField  iconPosition="left">
                     <p-inputIcon styleClass="pi pi-map" />
-                    <input id = "address" class = "inputfield" pInputText type="text" formControlName="address" placeholder="Organization Address" />
+                    <input id = "street" class = "inputfield" pInputText type="text" formControlName="street" placeholder="Organization Street" />
                 </p-iconField>
+
+                <div style = "display: flex; justify-content: space-between;">
+                    <input style = "width: 30%;" id = "city" class = "inputfield" pInputText type="text" formControlName="city" placeholder="City" />
+                    <p-dropdown
+                    formControlName="state" 
+                    [options]="states"
+                    placeholder="Select a State" />  
+                    <p-inputMask 
+                        mask="99999" 
+                        formControlName="zipcode" 
+                        placeholder="Zip Code" />
+                </div>
 
                 <p-iconField  iconPosition="left">
                     <p-inputIcon styleClass="pi pi-envelope" />

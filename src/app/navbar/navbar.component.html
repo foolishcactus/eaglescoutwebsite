@@ -8,12 +8,13 @@
 
     <ng-template pTemplate="end">
         <div class = "p-menuitem-wrapper">
-            <a [routerLink]="['/resources']" class="p-menuitem-link">Resources</a>
-            <a [routerLink]="['/guide']" class="p-menuitem-link">Guide</a>
-            <a [routerLink]="['/projectfinder']" class="p-menuitem-link">Project Finder</a>
-            <a [routerLink]="['/showcase']" class="p-menuitem-link">Showcase</a>
-            <a [routerLink]="['/apply']" class="p-menuitem-link">Apply</a>
-            <a [routerLink]="['/login']" class="p-menuitem-link">Login</a>
+            <a pRipple [routerLink]="['/resources']" class="p-menuitem-link">Resources</a>
+            <a pRipple [routerLink]="['/guide']" class="p-menuitem-link">Guide</a>
+            <a pRipple [routerLink]="['/projectfinder']" class="p-menuitem-link">Project Finder</a>
+            <a pRipple [routerLink]="['/showcase']" class="p-menuitem-link">Showcase</a>
+            <a pRipple *ngIf = "!isLoggedIn" [routerLink]="['/apply']" class="p-menuitem-link">Apply</a>
+            <a pRipple *ngIf = "!isLoggedIn" [routerLink]="['/login']" class="p-menuitem-link">Login</a>
+            <a pRipple *ngIf = "isLoggedIn" [routerLink] = "['/user-dashboard']" class = "p-menuitem-link">Dashboard</a>
         </div>
         
     </ng-template>

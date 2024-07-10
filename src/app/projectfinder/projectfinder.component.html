@@ -1,5 +1,5 @@
 <div class="landing-container">
-    <div class="landing-content">
+    <div class="landing-content animatedBackground">
       <h1>Project Finder</h1>
     </div>
 
@@ -17,6 +17,28 @@
 
 <div class = "main-container">
 
+    <!--This is a comment. Comments are not displayed in the browser
+    <p-galleria 
+        [numVisible]="3"  
+        [value]="images"
+        [showItemNavigators]="true"
+        [showThumbnails]="true" 
+        [circular]="true" 
+        [responsiveOptions]="responsiveOptions"> 
+        <ng-template pTemplate="item" let-item> 
+            <img 
+                [src]="item"  
+               
+                
+                style="width: 50%;" 
+            /> 
+        </ng-template> 
+  
+  
+        
+  
+    </p-galleria> 
+-->
     <div class="first-banner">
         <p-card class="custom-card" [style]="{'min-height': '100%', width: '25vw', padding: '2rem', borderRadius: '25px'}">
             <ng-template pTemplate="header">
@@ -49,5 +71,63 @@
         </p-card>
     </div>
 
+    <h2>Posts</h2>
+
     
+    
+    <div class = "postContainer" style ="width: 100vw; margin: 0 auto;">
+        
+        <div *ngFor="let postRow of posts" style = "display: flex; justify-content: space-evenly; width: 100%;">
+
+            <div *ngFor = "let post of postRow">
+                <p-card [style]="{ width: '25vw', borderRadius: '3rem', padding: '1rem', marginBottom: '10vh'}">
+                    <ng-template pTemplate="header">
+                        
+                        <p-galleria 
+                            [value]="post.images" 
+                            [circular]="true" 
+                            [showItemNavigators]="true" 
+                            [showThumbnails]="false"  
+                            [containerStyle]="{}">
+                            <ng-template pTemplate="item" let-item>
+                                <img [src]="item.urlProperty" style="width: 100%; display: block;" />
+                            </ng-template> 
+                        </p-galleria>
+                        
+                        <div style = "display: flex; justify-content: space-between;">
+                            <p class = "postHeader">{{post.title}}</p>
+                            <p-chip [style]="{ backgroundColor: getCategoryData(post.category).color }">
+                                <span class="material-icons">{{ getCategoryData(post.category).icon }}</span>
+                                <span style="margin-left: 0.5rem; margin-right: 0.5rem;">{{ post.category }}</span>
+                              </p-chip>
+                        </div>
+            
+                        <p class = "orgNameAndAddress">{{post.organization?.name}} | {{post.organization?.street}}, {{post.organization?.city}}, {{post.organization?.state}}, {{post.organization?.zipcode}}</p>
+                        
+            
+                          
+                    </ng-template>
+            
+                    <p class = "description">
+                        {{post.description}}
+                    </p>
+            
+                    <ng-template pTemplate="footer">
+                        
+                    <p-button pRipple label="Learn More"/>
+                        
+                    </ng-template>
+                </p-card>
+            </div>
+
+            <div>
+    
+            </div>
+
+        </div>
+      
+      
+
+      
+    </div>
 </div>

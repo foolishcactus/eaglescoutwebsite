@@ -1,0 +1,54 @@
+button{
+    width:100px;
+    padding: 10px;
+    height: 100px;
+    background-color: red;
+}
+
+.primaryContainer{
+    width: 100vw; 
+    height: 92vh; 
+    background-color: #f4f3f2; 
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+
+
+.postSummary{
+    width: 50vw;
+    height: 75vh; 
+    background-color: white;   
+    border-radius: 3rem;
+    box-shadow: rgba(50, 50, 93, 0.25) 0px 50px 100px -20px, rgba(0, 0, 0, 0.3) 0px 30px 60px -30px, rgba(10, 37, 64, 0.35) 0px -2px 6px 0px inset;
+}
+
+.orgSummary{
+    width: 30vw;
+    height: 65vh;
+    background-color: white;
+    border-radius: 3rem;
+    position: absolute;
+    bottom: 0;
+    
+}
+
+/* Website for this background: https://www.gradient-animator.com/ */
+.animatedBackground {
+    background: linear-gradient(90deg, #ef4443, #783C55, #003366);
+    background-size: 400% 400%;
+    width: 30vw;
+    height: 75vh;
+    position: relative;
+    
+    
+    border-radius: 3rem;
+    box-shadow: rgba(50, 50, 93, 0.25) -50px 50px 100px -20px, 
+    rgba(0, 0, 0, 0.3) -30px 30px 60px -30px, 
+    rgba(10, 37, 64, 0.35) -2px -2px 6px 0px inset;
+
+    -webkit-animation: AnimationName 30s ease infinite;
+    -moz-animation: AnimationName 30s ease infinite;
+    animation: AnimationName 30s ease infinite;
+}

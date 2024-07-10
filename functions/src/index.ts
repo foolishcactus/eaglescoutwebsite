@@ -1,18 +1,26 @@
 /* eslint-disable */
+//firebase deploy --only functions
 
 import * as functions from "firebase-functions";
 import * as admin from "firebase-admin";
 import {createClient} from "@usewaypoint/client";
+import {Organization} from "../../src/app/organization";
+//import {Post} from "../../src/app/post";
 
 // Initialize Firebase Admin SDK
 admin.initializeApp();
+const db = admin.firestore();
+const bucket = admin.storage().bucket();
 const client = createClient("667f5d604d0f8a0d83eed62c", "bjgEkzCaeuTzPQJHYZt9wnTY");
 
-exports.addOrganization = functions.https.onCall(async (data) => {
+exports.addOrganization = functions.https.onCall(async (data: Organization) => {
   
     const organization = {
-      organizationname: data.name,
-      address: data.address,
+      name: data.name,
+      street: data.street,
+      zipcode: data.zipcode,
+      state: data.state,
+      city: data.city,
       email: data.email,
       description: data.description,
       isVerified: false,
@@ -75,7 +83,11 @@ exports.verifyOrganization = functions.firestore.document('organizations/{email}
 });
 
 exports.getOrganizationByEmail = functions.https.onCall(async (data, context) => {
+  console.log("This is the log to see if the function even fired")
+
+  console.log("Hello this is the data we are being passed" + JSON.stringify(data));
   const email = data.email;
+  console.log("This is the email we are searching for" + data.email)
 
   if (!email) {
       throw new functions.https.HttpsError('invalid-argument', 'The function must be called with an email.');
@@ -88,9 +100,37 @@ exports.getOrganizationByEmail = functions.https.onCall(async (data, context) =>
           throw new functions.https.HttpsError('not-found', `No organization found with email: ${email}`);
       }
 
+      
       return { organization: organizationDoc.data() };
   } catch (error:any) {
       console.error('Error retrieving organization:', error);
       throw new functions.https.HttpsError('internal', 'Unable to retrieve organization data', { details: error.message });
   }
+});
+
+exports.createPost = functions.https.onCall(async (data, context) => {
+  const { title, description, category, userId, images } = data;
+
+  //Uploading images to Firebase Storage
+  const imageUrls = await Promise.all(images.map(async (image: string, index: number) => {
+    const buffer = Buffer.from(image, 'base64');
+    const filePath = `posts/${Date.now()}_${index}.jpg`;
+    const file = bucket.file(filePath);
+    await file.save(buffer, { contentType: 'image/jpeg' });
+    const [url] = await file.getSignedUrl({ action: 'read', expires: '03-01-2500' });
+    return url;
+  }));
+
+  const post = {
+    title,
+    description,
+    category,
+    userId,
+    images: imageUrls,
+    createdAt: admin.firestore.FieldValue.serverTimestamp(),
+  };
+
+  await db.collection('posts').add(post);
+
+  return { success: true, post };
 });

@@ -11,14 +11,17 @@ import { ButtonModule } from 'primeng/button';
 import { ToastModule } from 'primeng/toast';
 import { MessagesModule } from 'primeng/messages';
 import { MessageService } from 'primeng/api';
+import { DropdownModule } from 'primeng/dropdown';
+import { InputMaskModule } from 'primeng/inputmask';
 
 
 import { FirebaseService } from '../firebase.service';
+import { Organization } from '../organization';
 
 @Component({
   selector: 'app-apply',
   standalone: true,
-  imports: [CommonModule, RouterModule, ReactiveFormsModule, ToastModule, MessagesModule, ButtonModule, IconFieldModule, InputIconModule, InputTextModule, InputTextareaModule],
+  imports: [CommonModule, RouterModule, ReactiveFormsModule, ToastModule, MessagesModule, ButtonModule, IconFieldModule, InputMaskModule, InputIconModule, InputTextModule, InputTextareaModule, DropdownModule],
   providers: [MessageService],
   templateUrl: './apply.component.html',
   styleUrl: './apply.component.css'
@@ -26,11 +29,21 @@ import { FirebaseService } from '../firebase.service';
 export class ApplyComponent {
 
   applyForm: FormGroup;
+  states = [  'AL', 'AK', 'AZ', 'AR', 'CA', 'CO', 'CT', 'DE', 'FL', 'GA',
+    'HI', 'ID', 'IL', 'IN', 'IA', 'KS', 'KY', 'LA', 'ME', 'MD',
+    'MA', 'MI', 'MN', 'MS', 'MO', 'MT', 'NE', 'NV', 'NH', 'NJ',
+    'NM', 'NY', 'NC', 'ND', 'OH', 'OK', 'OR', 'PA', 'RI', 'SC',
+    'SD', 'TN', 'TX', 'UT', 'VT', 'VA', 'WA', 'WV', 'WI', 'WY'];
+
 
   constructor(private fb: FormBuilder, private fireBaseService: FirebaseService, private messageService: MessageService){
+    console.log(this.states.length);
     this.applyForm = this.fb.group({
       organizationname: ['', [Validators.required, Validators.minLength(1)]],
-      address: ['', [Validators.required, Validators.minLength(1)]],
+      street: ['', [Validators.required, Validators.minLength(1)]],
+      city: ['', [Validators.required, Validators.minLength(1)]],
+      state: ['', [Validators.required, Validators.minLength(1)]],
+      zipcode: ['', [Validators.required, Validators.pattern('^[0-9]{5}$')]],
       email: ['', [Validators.required, Validators.email]],
       description: ['', [Validators.required, Validators.minLength(1)]],
       
@@ -45,12 +58,17 @@ export class ApplyComponent {
 
   if (this.applyForm.valid){
 
-    const organizationData = {
+    const organizationData: Organization = {
       name: this.applyForm.value.organizationname,
-      address: this.applyForm.value.address,
+      street: this.applyForm.value.street,
+      zipcode: this.applyForm.value.zipcode,
+      state: this.applyForm.value.state,
+      city: this.applyForm.value.city,
       email: this.applyForm.value.email,
+      isVerified: false,
       description: this.applyForm.value.description,
     }
+    
 
     this.fireBaseService.addOrganization(organizationData).subscribe(
       response =>{
