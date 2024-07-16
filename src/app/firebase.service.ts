@@ -7,35 +7,30 @@ import { initializeApp, FirebaseApp } from 'firebase/app';
 import { getAuth, signInWithEmailAndPassword, User, signOut, onAuthStateChanged } from 'firebase/auth';
 import { httpsCallable, getFunctions } from 'firebase/functions';
 import { getStorage, ref, uploadBytesResumable, getDownloadURL } from 'firebase/storage';
-import { doc, getFirestore, addDoc, collection, getDocs, DocumentReference, getDoc } from 'firebase/firestore';
+import { doc, getFirestore, DocumentReference} from 'firebase/firestore';
 
 import { Organization } from './organization';
 import { Post } from './post';
-
+import firebaseConfig from '../app/firebase-config.json';
 
 @Injectable({
   providedIn: 'root'
 })
 
 export class FirebaseService {
-  private app: FirebaseApp = initializeApp({
-    apiKey: "AIzaSyC3yk4qTGPIaDqZ8CYVnNCkaQI3EEkmlXg",
-    authDomain: "eaglescoutwebsite.firebaseapp.com",
-    projectId: "eaglescoutwebsite",
-    storageBucket: "eaglescoutwebsite.appspot.com",
-    messagingSenderId: "337165863245",
-    appId: "1:337165863245:web:747ea9574211913cb7cf04",
-    measurementId: "G-ZPXTERDPQL"
-  });
+
+
+  private app: FirebaseApp = initializeApp(firebaseConfig);
 
   private auth = getAuth(this.app);
-  private functions = getFunctions(this.app);
+  private functions = getFunctions();
   private storage = getStorage(this.app);
   private firestore = getFirestore(this.app);
 
   // BehaviorSubject to hold and emit the current user state
   private currentUserSubject: BehaviorSubject<User | null> = new BehaviorSubject<User | null>(null);
   public currentUser: Observable<User | null> = this.currentUserSubject.asObservable();
+  
 
   constructor() {
     // Listen to authentication state changes
@@ -67,106 +62,79 @@ export class FirebaseService {
   }
 
  //DATBASE FUNCTIONS
-  addOrganization(organization: Organization): Observable<any> {
+  async addOrganization(organization: Organization): Promise<any> {
     console.log(JSON.stringify(organization));
     const addOrganizationFn = httpsCallable(this.functions, 'addOrganization');
     return from(addOrganizationFn(organization));
   }
 
-  async getOrganizationByEmail(email: string): Promise<any> {
-    const getOrg = httpsCallable(this.functions, 'getOrganizationByEmail');
+  async createPost(post: Post, email: string){
+    const postWithEmail = { ...post, email };
+    console.log("This is the post that is passed into the service." + JSON.stringify(postWithEmail));
+    const createPostFn = httpsCallable(this.functions, 'createPost');
+    await createPostFn(post);
+    return;
+  }
+
+
+  async getOrganizationByEmail(data: any): Promise<any>{
+    const getOrganizationByEmailFn = httpsCallable(this.functions, 'getOrganizationByEmail');
+    
     try {
-      const result = await getOrg({ email });
-      return result.data; // Assuming the cloud function returns the data in a property called 'data'
+      const response = await getOrganizationByEmailFn(data);
+      // Use type assertion to specify the type of response.data
+      const returnObj = response.data as Organization;
+      return returnObj;
     } catch (error) {
-      console.error('Error fetching organization data:', error);
+      console.error("Error fetching organization by email:", error);
       throw error;
     }
   }
 
+  //This is the only function that access the firebase storage directly
   async uploadImages(files: File[]): Promise<string[]> {
-    const uploadPromises = files.map(file => {
-      const filePath = `posts/${Date.now()}_${file.name}`;
-      const fileRef = ref(this.storage, filePath);
-      const uploadTask = uploadBytesResumable(fileRef, file);
-
-      return new Promise<string>((resolve, reject) => {
-        uploadTask.on('state_changed',
-          null,
-          error => reject(error),
-          async () => {
-            try {
-              const downloadURL = await getDownloadURL(uploadTask.snapshot.ref);
-              resolve(downloadURL);
-            } catch (error) {
-              reject(error);
+    try{
+      const uploadPromises = files.map(file => {
+        const filePath = `posts/${Date.now()}_${file.name}`;
+        const fileRef = ref(this.storage, filePath);
+        const uploadTask = uploadBytesResumable(fileRef, file);
+  
+        return new Promise<string>((resolve, reject) => {
+          uploadTask.on('state_changed',
+            null,
+            error => reject(error),
+            async () => {
+              try {
+                const downloadURL = await getDownloadURL(uploadTask.snapshot.ref);
+                resolve(downloadURL);
+              } catch (error) {
+                reject(error);
+              }
             }
-          }
-        );
+          );
+        });
       });
-    });
-    console.log("We are at the end of upload images")
-    return Promise.all(uploadPromises);
+      
+      console.log("We are at the end of upload images")
+      return Promise.all(uploadPromises);
+    }catch(error){
+      console.log("Error uploading images to firebase storage: " + error)
+      return [];
+    }
+    
   }
 
-  async createPost(post: Post): Promise<void> {
-    console.log("We are at the beginning of upload images")
-    try {
-      const docRef = await addDoc(collection(this.firestore, 'posts'), post);
-      console.log('Document written with ID: ', docRef.id);
-    } catch (e) {
-      console.error('Error adding document: ', e);
-    }
-
-    console.log("We are at the end of upload images")
+  async getFilteredPosts(filters: any): Promise<[]>{
+    const getFilteredPostsFn = httpsCallable(this.functions, 'getFilteredPosts');
+    let returnVal = await getFilteredPostsFn(filters);
+   console.log("This is the return value in the firebase function" + JSON.stringify(returnVal.data));
+    return returnVal.data as [];
   }
 
-  async getPostsWithOrganizations(): Promise<Post[]> {
-    // Ensure the user is authenticated and initialized
-    const isLoggedIn = this.auth.currentUser;
-    console.log("We are now getting the posts with organizations function.")
-    if (!isLoggedIn) {
-      throw new Error('User not authenticated');
-    }
-
-    const postsCollection = collection(this.firestore, 'posts');
-    const postsSnapshot = await getDocs(postsCollection);
-    const posts: Post[] = [];
-
-    for (const postDoc of postsSnapshot.docs) {
-      const postData = postDoc.data() as Post;
-      const organizationRef = postData.organizationRef as DocumentReference<Organization>;
-
-      if (organizationRef) {
-        try {
-          // Fetch the associated organization
-          const organizationDoc = await getDoc(organizationRef);
-          if (organizationDoc.exists()) {
-            const organizationData = organizationDoc.data() as Organization;
-
-            //Transforming Images array into an array of objects that have a property of urlProperty with the originial string to fit the constraints of PRIME NG galleria template
-            const transformedImages = postData.images.map(url => ({ urlProperty: url }));
-
-            // Add the organization to the post data
-            const post: Post = {
-              ...postData,
-              organization: organizationData,
-              images: transformedImages,
-            };
-            
-            posts.push(post);
-          } else {
-            console.error(`Organization document does not exist for post: ${postDoc.id}`);
-          }
-        } catch (error) {
-          console.error(`Error fetching organization for post: ${postDoc.id}`, error);
-        }
-      } else {
-        console.error(`No organizationRef for post: ${postDoc.id}`);
-      }
-    }
-
-    return posts;
+  async getAllPosts(): Promise<[]>{
+    const getAllPostsFn = httpsCallable(this.functions, 'getAllPosts');
+    let returnVal = await getAllPostsFn();
+    return returnVal.data as [];
   }
 
   createOrganizationRef(organizationEmail: string): DocumentReference<any>{

@@ -18,7 +18,7 @@ import { User } from 'firebase/auth';
 })
 export class UserDashboardComponent {
   ref: DynamicDialogRef | undefined;
-  currentOrganization?: Organization;
+  currentOrganization?: any;
   currentUser: User | null;
   
   constructor(public firebaseService: FirebaseService, public dialogService: DialogService){
@@ -32,7 +32,8 @@ export class UserDashboardComponent {
     try {
       if (this.currentUser && this.currentUser.email){
         console.log("this is the current user email" + this.currentUser.email);
-        this.currentOrganization = await this.firebaseService.getOrganizationByEmail(this.currentUser.email);
+        this.currentOrganization = await this.firebaseService.getOrganizationByEmail({email: this.currentUser.email});
+        console.log("this is the return value from get organization if it's successful" + JSON.stringify(this.currentOrganization));
       }
       
     } catch (error) {
@@ -51,6 +52,45 @@ export class UserDashboardComponent {
 
   logout(){
     this.firebaseService.logout();
+  }
+
+
+  addOrganization(){
+    let organization: Organization = {
+      street: "1600 fargo",
+      zipcode: 72453,
+      state: "Oklahoma",
+      city: "Tulsa",
+      description: "We love to help farmers",
+      email: "jackfrancicso0000@gmail.com",
+      isVerified: false,
+      name: "FarmersToHands"
+    }
+
+   this.firebaseService.addOrganization(organization)
+   .then((messgage) =>{
+    console.log("Adding organization was success here is the return:" + JSON.stringify(messgage))})
+    .catch((error:any) =>{
+      console.log("We cannot get this thing to work")
+    });
+   
+  }
+
+  async getOrganizationByEmail(){
+    console.log("We are running get org by email")
+    console.log("This is the current user" + JSON.stringify(this.currentUser));
+    console.log("This is the current user email" + JSON.stringify(this.currentUser?.email));
+    try {
+      if (this.currentUser && this.currentUser.email){
+        console.log("this is the current user email" + this.currentUser.email);
+        let currentOrganization = await this.firebaseService.getOrganizationByEmail({email: this.currentUser.email});
+        console.log("this is the return value from get organization if it's successful" + JSON.stringify(currentOrganization));
+      }
+      
+    } catch (error) {
+      console.error('Error fetching organization:', error);
+    }
+    
   }
 
 }

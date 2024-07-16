@@ -1,4 +1,13 @@
 {
-  "indexes": [],
+  "indexes": [{
+    "collectionGroup": "posts",
+    "queryScope": "COLLECTION",
+    "fields": [
+      { "fieldPath": "lat", "order": "ASCENDING" },
+      { "fieldPath": "long", "order": "ASCENDING" },
+      { "fieldPath": "category", "order": "ASCENDING" },
+      { "fieldPath": "__name__", "order": "ASCENDING" }
+    ]
+  }],
   "fieldOverrides": []
 }

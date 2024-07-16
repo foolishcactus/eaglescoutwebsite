@@ -143,4 +143,63 @@
   color: white;
 }
 
+.filterContainer{
+  width: 15%;
+  max-height: 30vh;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-around;
+  margin-bottom: 10vh;
+  background-color: white;
+  border-radius: 2rem;
+  padding: 4rem;
+}
+
+
+
+:host ::ng-deep .p-slider{
+  font-size: 1.6rem;
+  width: 100%;
+  color: white;
+  margin-bottom: 3rem;
+
+}
+
+:host ::ng-deep .p-icon-field input{
+  width: 40vw;
+  color: black;
+  border-radius: 1rem;
+  padding: 1rem;
+  font-size: 1.6rem;
+  padding-left: 2rem;
+}
+
+:host ::ng-deep .p-multiselect{
+  width: 100%;
+  padding: 0.5rem;
+  border-radius: 1rem;
+  font-size: 1.6rem;
+  margin-bottom: 1rem;
+}
+
+:host ::ng-deep .p-multiselect-item{
+  font-size: 1.6rem;
+}
+
+:host ::ng-deep .p-inputtext{
+  width: 100%;
+  padding: 1rem;
+  border-radius: 1rem;
+  font-size: 1.6rem;
+  margin-bottom: 1rem;
+}
+
+:host ::ng-deep .p-button{
+  width: 5vw;
+}
+
+
+
+
 

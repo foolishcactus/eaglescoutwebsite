@@ -10,6 +10,8 @@ import { InputTextareaModule } from 'primeng/inputtextarea';
 import { DropdownModule } from 'primeng/dropdown';
 import { ImageModule } from 'primeng/image';
 import { FileUploadModule } from 'primeng/fileupload';
+import { ButtonModule } from 'primeng/button';
+
 
 import { ToastModule } from 'primeng/toast';
 import { MessagesModule } from 'primeng/messages';
@@ -20,7 +22,7 @@ import { Post } from '../post';
 @Component({
   selector: 'app-postcreator',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule, InputTextModule, FileUploadModule, ImageModule, InputTextareaModule, DropdownModule, ToastModule, MessagesModule],
+  imports: [CommonModule, ReactiveFormsModule, InputTextModule, ButtonModule, FileUploadModule, ImageModule, InputTextareaModule, DropdownModule, ToastModule, MessagesModule],
   providers: [DialogService, MessageService],
   templateUrl: './postcreator.component.html',
   styleUrl: './postcreator.component.css'
@@ -137,12 +139,11 @@ export class PostcreatorComponent {
         title,
         description,
         category: category.name,
-        organizationRef: this.firebaseService.createOrganizationRef(currentUserEmail),
         images: imageUrls,
         createdAt: new Date(),
       };
 
-    await this.firebaseService.createPost(post);
+    await this.firebaseService.createPost(post, currentUserEmail);
      
     this.postForm.reset();
     this.images = [];

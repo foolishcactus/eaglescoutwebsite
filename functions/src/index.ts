@@ -1,136 +1,218 @@
 /* eslint-disable */
 //firebase deploy --only functions
+import { initializeApp } from "firebase-admin/app";
+import { logger } from "firebase-functions";
+//import { onDocumentCreated } from "firebase-functions/v2/firestore";
+import {getFirestore, FieldValue } from "firebase-admin/firestore";
+import {onCall} from "firebase-functions/v2/https";
 
-import * as functions from "firebase-functions";
-import * as admin from "firebase-admin";
-import {createClient} from "@usewaypoint/client";
-import {Organization} from "../../src/app/organization";
+
+//import {Organization} from "../../src/app/organization";
 //import {Post} from "../../src/app/post";
 
 // Initialize Firebase Admin SDK
-admin.initializeApp();
-const db = admin.firestore();
-const bucket = admin.storage().bucket();
-const client = createClient("667f5d604d0f8a0d83eed62c", "bjgEkzCaeuTzPQJHYZt9wnTY");
 
-exports.addOrganization = functions.https.onCall(async (data: Organization) => {
-  
-    const organization = {
-      name: data.name,
-      street: data.street,
-      zipcode: data.zipcode,
-      state: data.state,
-      city: data.city,
-      email: data.email,
-      description: data.description,
-      isVerified: false,
-      createdAt: admin.firestore.FieldValue.serverTimestamp(),
-    };
-  
-    try {
-      // Write to Firestore
-      await admin.firestore().collection('organizations').doc(organization.email).set(organization);
-      return { id: organization.email };
-    } catch (error: any) {
-      console.error('Error adding organization:', error);
-      throw new functions.https.HttpsError('internal', `Unable to add organization: ${error.message}`, {
-        details: error
+
+//var serviceAccount = require("C:/Users/egumu/Documents/eaglescoutwebsite-firebase-adminsdk-k5rmp-d8e05ddb7c.json");
+initializeApp();
+const db = getFirestore();
+//{ cors: 'http://localhost:4200' }
+
+//data is the object that is passed
+
+export const getAllPosts = onCall(async (request) => {
+  try {
+    const postsRef = db.collection('posts');
+
+    logger.log("We are now beginning the query to get all posts");
+    
+    // Execute the query to get all documents in the 'posts' collection
+    const snapshot = await postsRef.get();
+
+    logger.log("This is the snapshot from the query " + JSON.stringify(snapshot));
+    logger.log("Also the unstringified version: " + snapshot);
+
+    const allPosts: any[] = [];
+
+    // Process each document in the snapshot
+    for (const doc of snapshot.docs) {
+      const postData = doc.data();
+      const organizationRef = postData.organizationRef;
+
+      // Fetch the organization data using the reference
+      const organizationDoc = await organizationRef.get();
+      const organizationData = organizationDoc.data();
+
+      // Add the organization data to the post
+      allPosts.push({
+        id: doc.id,
+        ...postData,
+        organizationRef: null,
+        organization: organizationData
       });
     }
-});
 
-exports.verifyOrganization = functions.firestore.document('organizations/{email}').onUpdate(async (change, context) => {
-  const newValue = change.after.data();
-  const previousValue = change.before.data();
+    logger.log("This is the all posts with organizations: " + JSON.stringify(allPosts));
+    return allPosts;
 
-  // Only trigger if isVerified changes from false to true
-  if (previousValue.isVerified === false && newValue.isVerified === true) {
-      console.log('Organization verified:', newValue.email);
-
-      try {
-          // Create a user account with Firebase Authentication
-          const userRecord = await admin.auth().createUser({
-              email: newValue.email,
-              emailVerified: false,
-              password: 'temporaryPassword123', // Set a temporary password
-              displayName: newValue.organizationname,
-              disabled: false,
-          });
-
-          console.log('User created successfully:', userRecord.uid);
-
-          // Generate password reset link
-          const resetLink = await admin.auth().generatePasswordResetLink(newValue.email);
-
-          console.log('Password reset link generated:', resetLink);
-
-          // Send the reset link email using Waypoint template
-
-          await client.emailMessages.createTemplated({
-            templateId: "wptemplate_XqtPZL5jFbMg7ZzY",
-            to: newValue.email,
-            variables: {
-              url: resetLink,
-            },
-          });
-
-          console.log('Password reset email sent successfully to:', newValue.email);
-
-      } catch (error) {
-          console.error('Error creating user or sending password reset email:', error);
-      }
+  } catch (error: any) {
+    logger.log("We ran into an error when getting all posts in the cloud function: " + JSON.stringify(error));
+    return error.message;
   }
 });
 
-exports.getOrganizationByEmail = functions.https.onCall(async (data, context) => {
-  console.log("This is the log to see if the function even fired")
-
-  console.log("Hello this is the data we are being passed" + JSON.stringify(data));
-  const email = data.email;
-  console.log("This is the email we are searching for" + data.email)
-
-  if (!email) {
-      throw new functions.https.HttpsError('invalid-argument', 'The function must be called with an email.');
-  }
-
+export const getFilteredPosts = onCall(async (request) => {
   try {
-      const organizationDoc = await admin.firestore().collection('organizations').doc(email).get();
+    // One degree of latitude is approximately 69 miles
+    const latShift = request.data.radius / 69.0;
 
-      if (!organizationDoc.exists) {
-          throw new functions.https.HttpsError('not-found', `No organization found with email: ${email}`);
-      }
+    // One degree of longitude varies based on the latitude
+    const longShift = request.data.radius / (69.0 * Math.cos(request.data.lat * Math.PI / 180));
 
+    const latMin = request.data.lat - latShift;
+    const latMax = request.data.lat + latShift;
+    const longMin = request.data.long - longShift;
+    const longMax = request.data.long + longShift;
+
+    logger.log("This is latmin: " + latMin);
+    logger.log("This is latMax: " + latMax);
+    logger.log("This is longMin: " + longMin);
+    logger.log("This is longMax: " + longMax);
+
+    const postsRef = db.collection('posts');
+
+    logger.log("We are now beginning the query");
+    logger.log("This is the categories data: " + JSON.stringify(request.data.category));
+    logger.log("This is whether we have more than 1 category query" + JSON.stringify(request.data.category.length))
+
+    let query = postsRef
+      .where('lat', '>=', latMin)
+      .where('lat', '<=', latMax)
+      .where('long', '>=', longMin)
+      .where('long', '<=', longMax);
+
+    if (request.data.category && request.data.category.length > 0) {
+      logger.log("We have category queries");
+      const categoryNames = request.data.category.map((category: { name: string }) => category.name);
+      logger.log("This is the categoryNames " + JSON.stringify(categoryNames))
+      query = query.where('category', 'in', categoryNames);
+    }
+
+    const snapshot = await query.get();
+
+    logger.log("This is the snapshot from the query " + JSON.stringify(snapshot));
+    logger.log("Also the unstringified version: " + snapshot);
+
+    const filteredPosts: any[] = [];
+
+    for (const doc of snapshot.docs) {
+      const postData = doc.data();
+      const organizationRef = postData.organizationRef;
       
-      return { organization: organizationDoc.data() };
+      // Fetch the organization data using the reference
+      const organizationDoc = await organizationRef.get();
+      const organizationData = organizationDoc.data();
+
+      // Add the organization data to the post
+      filteredPosts.push({
+        id: doc.id,
+        ...postData,
+        organizationRef: null,
+        organization: organizationData
+      });
+    }
+
+    logger.log("This is the filtered posts" + JSON.stringify(filteredPosts));
+    return  filteredPosts;
+
   } catch (error:any) {
-      console.error('Error retrieving organization:', error);
-      throw new functions.https.HttpsError('internal', 'Unable to retrieve organization data', { details: error.message });
+    logger.log("We ran into an error when getting filtered posts in the cloud function: " + JSON.stringify(error));
+    return error.message;
   }
 });
 
-exports.createPost = functions.https.onCall(async (data, context) => {
-  const { title, description, category, userId, images } = data;
+export const addOrganization = onCall(async (request) =>{
+  try{
+  //request.data is equal to the Organization object we are passing
+  const organization = {
+    name: request.data.name,
+    street: request.data.street,
+    zipcode: request.data.zipcode,
+    state: request.data.state,
+    city: request.data.city,
+    email: request.data.email,
+    description: request.data.description,
+    isVerified: false,
+    createdAt: FieldValue.serverTimestamp(),
+  };
+  
+ 
+    await db.collection("organizations").doc(request.data.email).set(organization);
+    logger.log("Organization added.")
+  } catch(error){
+    logger.log("We ran into an error when adding organization in the cloud function: " + JSON.stringify(error));
+  }
+  
+});
 
-  //Uploading images to Firebase Storage
-  const imageUrls = await Promise.all(images.map(async (image: string, index: number) => {
-    const buffer = Buffer.from(image, 'base64');
-    const filePath = `posts/${Date.now()}_${index}.jpg`;
-    const file = bucket.file(filePath);
-    await file.save(buffer, { contentType: 'image/jpeg' });
-    const [url] = await file.getSignedUrl({ action: 'read', expires: '03-01-2500' });
-    return url;
-  }));
+export const getOrganizationByEmail = onCall(async (request) => {
+  try{
+  const email = request.data.email;
+  logger.log("This is the email we are passing index.ts: " + email);
+  console.log("This is the email we are passing index.ts: " + email);
+
+  if (!email){
+    logger.log("Something wrong with the email passed");
+    return;
+  }
+
+  const doc = await db.collection('organizations').doc(email).get();
+  
+
+  if (!doc.exists) {
+    logger.log("No document existis");
+  } 
+  logger.log("This is the doc.data" + JSON.stringify(doc.data()));
+  return doc.data();
+  }catch (error: any){
+    logger.log("We ran into an error when adding organization in the cloud function: " + JSON.stringify(error));
+    return;
+  }
+});
+
+export const createPost = onCall(async (request) => {
+  try{
+  //request.data is equal to the object we are passing
+  //Object structure that gets passed: {"title":"Firepit","description":"We need help building a firepit","category":"Construction","images":["https://firebasestorage.googleapis.com/v0/b/eaglescoutwebsite.appspot.com/o/posts%2F1720800032575_TopPOV%20Blueprint.PNG?alt=media&token=50f36b9e-6993-4e3d-aabe-b7cd1c031cc7"],"createdAt":"2024-07-12T16:00:33.496Z","email":"strikerchannele@gmail.com"}
+  const organizationRef = db.collection('organizations').doc(request.data.email);
+  const organizationDoc = await organizationRef.get();
+
+  if (!organizationDoc.exists) {
+    throw new Error("Organization not found");
+  }
+
+  const organizationData = organizationDoc.data();
+  
+  if (!organizationData){
+    throw new Error("Organization data was undefined")
+  }
 
   const post = {
-    title,
-    description,
-    category,
-    userId,
-    images: imageUrls,
-    createdAt: admin.firestore.FieldValue.serverTimestamp(),
-  };
-
-  await db.collection('posts').add(post);
-
-  return { success: true, post };
+      title: request.data.title,
+      description: request.data.description,
+      category: request.data.category,
+      organizationRef: organizationRef,
+      images: request.data.images,
+      createdAt: FieldValue.serverTimestamp(),
+      lat: organizationData.lat,
+      long: organizationData.long,
+    };
+    await db.collection('posts').add(post);
+    return "Success";
+  }catch (error: any){
+    logger.log("We ran into an error when adding organization in the cloud function: " + JSON.stringify(error));
+    return error.message;
+  }
+  
 });
+

@@ -70,14 +70,12 @@ export class ApplyComponent {
     }
     
 
-    this.fireBaseService.addOrganization(organizationData).subscribe(
-      response =>{
-        console.log("Organization addedd successfully: " + response);
-      },
-      error => {
-        console.error('COMPONENT ERRROR IN APPLY COMPONENT' + error);
-      }
-    )
+    this.fireBaseService.addOrganization(organizationData)
+   .then((messgage) =>{
+    console.log("Adding organization was success here is the return:" + JSON.stringify(messgage))})
+    .catch((error:any) =>{
+      console.log("We cannot get this thing to work")
+    });
   }
   }
   

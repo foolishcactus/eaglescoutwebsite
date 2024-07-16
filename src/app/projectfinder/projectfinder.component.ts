@@ -5,21 +5,30 @@ import { CardModule } from 'primeng/card';
 import { GalleriaModule } from 'primeng/galleria';
 import { ButtonModule } from 'primeng/button';
 import { ChipModule } from 'primeng/chip';
+import { SliderModule } from 'primeng/slider';
+import { InputTextModule } from 'primeng/inputtext';
+import { MultiSelectModule } from 'primeng/multiselect';
+import { InputMaskModule } from 'primeng/inputmask';
+import { IconFieldModule } from 'primeng/iconfield';
+import { InputIconModule } from 'primeng/inputicon';
 
 import { FirebaseService } from '../firebase.service';
 import { Post } from '../post';
+import { FormGroup, ReactiveFormsModule, FormBuilder, Validators, FormsModule } from '@angular/forms';
+import { GeocodingService } from '../geocoding.service';
 
 @Component({
   selector: 'app-projectfinder',
   standalone: true,
-  imports: [CardModule, CommonModule, GalleriaModule, ButtonModule, ChipModule],
+  imports: [CardModule, CommonModule, SliderModule, IconFieldModule, InputIconModule, InputMaskModule, FormsModule, GalleriaModule, MultiSelectModule, InputTextModule, ButtonModule, ChipModule, ReactiveFormsModule],
   templateUrl: './projectfinder.component.html',
   styleUrl: './projectfinder.component.css'
 })
 export class ProjectfinderComponent {
-  posts: Post[][] = [
+  posts: Post[][] = [];
+  value: number = 50;
 
-  ];
+  categories = [{name: "Construction"}, {name: "Renovation"}, {name: "Environmental"}, {name: "Landscaping"}, {name: "Other"}]
 
   categoryData = {
     Construction: { icon: 'construction', color: '#ef4957' },
@@ -29,54 +38,37 @@ export class ProjectfinderComponent {
     Other: { icon: 'miscellaneous_services', color: '#fa8739' }
   };
 
-  testPost: Post = {
-    "description": "We need help building a sign post",
-    "images": [
-      {
-        "urlProperty": "https://firebasestorage.googleapis.com/v0/b/eaglescoutwebsite.appspot.com/o/posts%2Fsignpost.jpg?alt=media&token=cd280644-3d60-4566-b63a-dcb696de43f9"
-      },
-      {
-        "urlProperty": "https://firebasestorage.googleapis.com/v0/b/eaglescoutwebsite.appspot.com/o/posts%2Fsignpost2.jpg?alt=media&token=a9a5d751-bdf8-474a-8b3b-1a38f9379031"
-      }
-    ],
-    "organizationRef": this.firebaseService.createOrganizationRef("strikerchannele@gmail.com"),
-    "category": "Construction",
-    "title": "Build a sign post",
-    "createdAt": new Date(),
-    "organization": {
-      "description": "We help businesses",
-      "email": "strikerchannele@gmail.com",
-      "isVerified": true,
-      "name": "Striker Non Profit",
-      "street": "7059 Monterey Cypress TR",
-      "zipcode": 32773,
-      "state": "FL",
-      "city": "Sanford",
-    }
-  }
+  filterForm: FormGroup;
 
-  constructor(private firebaseService: FirebaseService){
-
+  constructor(private firebaseService: FirebaseService, private fb: FormBuilder, private geocodingService: GeocodingService){
+    this.filterForm = this.fb.group({
+      name: [''],
+      category: [''],
+      zipcode: ['', [Validators.required, Validators.pattern('^[0-9]{5}$')]],
+      radius: [5],
+    })
   }
 
   ngOnInit(){
-    this.loadPosts();
-    this.posts.forEach((row: any) =>{
-      row.forEach((post: any) =>{
-        console.log("This is the post" + post);
-      })
-    });   
+    this.loadPosts(true);
   }
 
-  async loadPosts() {
-    let tempPosts = [];
+  async loadPosts(isOnInit?: boolean) {
+    this.posts = [];
+    let tempPosts: any[] = [];
     let tempContainer: any[] = [];
     let i = 0;
 
     try {
-      tempPosts = await this.firebaseService.getPostsWithOrganizations();
-      console.log("This is how many posts we have in the database:" + tempPosts.length);
+      if(isOnInit){
+        tempPosts = await this.firebaseService.getAllPosts();
 
+      }else{
+        tempPosts = await this.filterSearch();
+      }
+      
+
+      tempPosts = this.transformPostImages(tempPosts);
       for (i = 0; i < tempPosts.length; i++){
         //Add groups of 3 posts to this.posts
         if (i % 3 == 0 && i != 0){
@@ -101,5 +93,54 @@ export class ProjectfinderComponent {
 
   getCategoryData(category: string) {
     return this.categoryData[category as keyof typeof this.categoryData] || this.categoryData['Other'];
+  }
+
+  async filterSearch(): Promise<any[]>{
+    if (!this.filterForm.valid){
+      throw new Error("The filter form isn't valid");
+    }
+
+    let zipCodeString: string = this.filterForm.get("zipcode")?.value.toString();
+    let response = await this.geocodingService.getCoordinates(zipCodeString);
+         
+    
+    const filtersObject = {
+      name: this.filterForm.get("name")?.value,
+      category: this.filterForm.get("category")?.value,
+      zipcode: this.filterForm.get("zipcode")?.value,
+      radius: this.filterForm.get("radius")?.value,
+      lat: response.results[0].geometry.location.lat || null,
+      long:response.results[0].geometry.location.lng || null,
+    }
+
+    console.log("this is the filters object" + JSON.stringify(filtersObject));
+    return await this.firebaseService.getFilteredPosts(filtersObject);
+  }
+
+  //Transforming Images array into an array of objects that have a property of urlProperty with the originial string to fit the constraints of PRIME NG galleria template
+  transformPostImages(posts: any[]): any[] {
+    console.log("We are in the transform function");
+    posts.forEach(post => {
+      console.log("In the forEach loop");
+      if (post.images && post.images.length > 0) {
+        post.images = post.images.map((url: string) => ({ urlProperty: url }));
+      } else {
+        post.images = [];
+      }
+    });
+    // Assign the transformed posts to the component's posts property
+    return posts;
+  }
+
+  onResetFilter(){
+    this.filterForm.reset();
+    this.filterForm.get("radius")?.setValue(5);
+  }
+
+  //function used for html template
+  get radius() {
+    
+      const control = this.filterForm.get('radius');
+      return control ? control.value : 0;
   }
 }

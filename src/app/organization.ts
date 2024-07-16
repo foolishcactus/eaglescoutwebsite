@@ -8,3 +8,5 @@ export interface Organization {
     isVerified: boolean,
     name: string,
 }
+
+
