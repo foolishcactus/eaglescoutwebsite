@@ -7,52 +7,59 @@ import { TimelineModule } from 'primeng/timeline';
   selector: 'app-guide',
   standalone: true,
   imports: [CommonModule, DividerModule, TimelineModule],
-  templateUrl: './guide.component.html', 
-  styleUrls: ['./guide.component.css', '../../styles.css' ]
+  templateUrl: './guide.component.html',
+  styleUrls: ['./guide.component.css', '../../styles.css'],
 })
 export class GuideComponent {
   tocItems = [
     {
-      title: "Requirement 5",
-      id: "requirement5",
+      title: 'Requirement 5',
+      id: 'requirement5',
       isActive: false,
     },
     {
-      title: "Picking a Project",
-      id: "pickingaproject",
+      title: 'Picking a Project',
+      id: 'pickingaproject',
       isActive: false,
     },
     {
-      title: "Research",
-      id: "research",
+      title: 'Research',
+      id: 'research',
       isActive: false,
     },
     {
-      title: "Part 1",
-      id: "part1",
+      title: 'Part 1',
+      id: 'part1',
       isActive: false,
       sub: [
-        {id: "projectdescription", title: "Project Description", isActive: false, },
-        {id: "givingleadership", title: "Giving Leadership", isActive: false, },
-        {id: "materialssuppliestools", title: "Materials, Supplies, Tools", isActive: false, },
-        {id: "fundraising", title: "Fundraising", isActive: false, },
-        {id: "safety", title: "Safety", isActive: false, },
-        {id: "approval", title: "Approval", isActive: false}
-      ]
-    }
-  ]
+        {
+          id: 'projectdescription',
+          title: 'Project Description',
+          isActive: false,
+        },
+        { id: 'givingleadership', title: 'Giving Leadership', isActive: false },
+        {
+          id: 'materialssuppliestools',
+          title: 'Materials, Supplies, Tools',
+          isActive: false,
+        },
+        { id: 'fundraising', title: 'Fundraising', isActive: false },
+        { id: 'safety', title: 'Safety', isActive: false },
+        { id: 'approval', title: 'Approval', isActive: false },
+      ],
+    },
+  ];
 
-  activeSection: string = "";
+  activeSection: string = '';
   scrollProgress: number = 0;
 
   @HostListener('window:scroll', ['$event'])
-
   onWindowScroll() {
     //const offset = window.scrollY;
-//
+    //
     //this.tocItems.forEach(item => {
     //  const element = document.getElementById(item.id);
-//
+    //
     //  if (element) {
     //    const rect = element.getBoundingClientRect();
     //    if (rect.top + offset >= offset && rect.bottom + offset <= offset + window.innerHeight) {
@@ -69,11 +76,11 @@ export class GuideComponent {
     const viewportHeight = window.innerHeight;
     const viewportCenter = viewportHeight / 2;
 
-    let activeItemId:any = null;
+    let activeItemId: any = null;
     let minDiff = Number.MAX_VALUE;
 
     // First, check main items without subheadings
-    this.tocItems.forEach(item => {
+    this.tocItems.forEach((item) => {
       if (!item.sub) {
         const element = document.getElementById(item.id);
         if (element) {
@@ -89,7 +96,7 @@ export class GuideComponent {
     });
 
     // Then, check items with subheadings and their sub-items
-    this.tocItems.forEach(item => {
+    this.tocItems.forEach((item) => {
       if (item.sub) {
         const element = document.getElementById(item.id);
         if (element) {
@@ -101,7 +108,7 @@ export class GuideComponent {
             activeItemId = item.id;
           }
         }
-        item.sub.forEach(subItem => {
+        item.sub.forEach((subItem) => {
           const subElement = document.getElementById(subItem.id);
           if (subElement) {
             const rect = subElement.getBoundingClientRect();
@@ -117,10 +124,10 @@ export class GuideComponent {
     });
 
     // Update the active state
-    this.tocItems.forEach(item => {
+    this.tocItems.forEach((item) => {
       if (item.sub) {
         item.isActive = item.id === activeItemId;
-        item.sub.forEach(subItem => {
+        item.sub.forEach((subItem) => {
           subItem.isActive = subItem.id === activeItemId;
         });
       } else {
@@ -136,26 +143,29 @@ export class GuideComponent {
   scrollToSection(id: string): void {
     const element = document.getElementById(id);
     if (element) {
-        const elementRect = element.getBoundingClientRect();
-        const absoluteElementTop = elementRect.top + window.scrollY;
-        const middle = absoluteElementTop - (window.innerHeight / 2) + (elementRect.height / 2);
+      const elementRect = element.getBoundingClientRect();
+      const absoluteElementTop = elementRect.top + window.scrollY;
+      const middle =
+        absoluteElementTop - window.innerHeight / 2 + elementRect.height / 2;
 
-        window.scrollTo({
-            top: middle,
-            behavior: 'smooth'
-        });
+      window.scrollTo({
+        top: middle,
+        behavior: 'smooth',
+      });
 
-        // Update the active section after scrolling
-        setTimeout(() => {
-            this.updateScrollProgress();
-            this.updateActiveSection();
-        }, 500); // Adjust the timeout duration as needed
+      // Update the active section after scrolling
+      setTimeout(() => {
+        this.updateScrollProgress();
+        this.updateActiveSection();
+      }, 500); // Adjust the timeout duration as needed
     }
   }
 
   updateScrollProgress(): void {
-    const scrollTop = document.documentElement.scrollTop || document.body.scrollTop;
-    const scrollHeight = document.documentElement.scrollHeight || document.body.scrollHeight;
+    const scrollTop =
+      document.documentElement.scrollTop || document.body.scrollTop;
+    const scrollHeight =
+      document.documentElement.scrollHeight || document.body.scrollHeight;
     const clientHeight = document.documentElement.clientHeight;
 
     this.scrollProgress = (scrollTop / (scrollHeight - clientHeight)) * 100;

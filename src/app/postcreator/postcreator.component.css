@@ -1,73 +1,72 @@
-.main-container{
-    width: 40vw;
-    height: 80vh;
-    padding: 1rem;
+.main-container {
+  width: 40vw;
+  height: 80vh;
+  padding: 1rem;
 }
 
-.headerText{
-    color: black;
-    font-size: 3.6rem;
-    font-weight: 900;
-    font-family: 'Roboto', sans-serif;
-    margin-top: 0;
+.headerText {
+  color: black;
+  font-size: 3.6rem;
+  font-weight: 900;
+  font-family: "Roboto", sans-serif;
+  margin-top: 0;
 }
 
-.secondaryText{
-    color: #EF4443;
-    font-size: 1.6rem;
-    font-weight: 700;
-    font-family: 'Roboto', sans-serif;
-    margin: 0;
-    
+.secondaryText {
+  color: #ef4443;
+  font-size: 1.6rem;
+  font-weight: 700;
+  font-family: "Roboto", sans-serif;
+  margin: 0;
 }
 
-.inputField{
-    width: 100%;
-    padding: 1rem;
-    font-size: 1.6rem;
-    margin-bottom: 1rem;
-    box-shadow: rgba(100, 100, 111, 0.2) 0px 7px 29px 0px;
+.inputField {
+  width: 100%;
+  padding: 1rem;
+  font-size: 1.6rem;
+  margin-bottom: 1rem;
+  box-shadow: rgba(100, 100, 111, 0.2) 0px 7px 29px 0px;
 }
 
 :host ::ng-deep .p-dropdown {
-    width: 100%;
-    padding: 1rem;
-    font-size: 1.6rem;
-    margin-bottom: 1rem;
-    box-shadow: rgba(100, 100, 111, 0.2) 0px 7px 29px 0px;
- }
+  width: 100%;
+  padding: 1rem;
+  font-size: 1.6rem;
+  margin-bottom: 1rem;
+  box-shadow: rgba(100, 100, 111, 0.2) 0px 7px 29px 0px;
+}
 
- :host ::ng-deep .p-dropdown-label {
-    font-size: 1.6rem;
- }
+:host ::ng-deep .p-dropdown-label {
+  font-size: 1.6rem;
+}
 
- :host ::ng-deep .p-dropdown-item{
-    font-size: 1.6rem;
- }
+:host ::ng-deep .p-dropdown-item {
+  font-size: 1.6rem;
+}
 
-:host ::ng-deep .p-fileupload .p-button{
-    background-color: #003366;
-    width: 100%;
-    padding: 0.5rem;
-    font-size: 1.2rem;
-    border-radius: 1.5rem;
-    margin-bottom: 1rem;
- }
+:host ::ng-deep .p-fileupload .p-button {
+  background-color: #003366;
+  width: 100%;
+  padding: 0.5rem;
+  font-size: 1.2rem;
+  border-radius: 1.5rem;
+  margin-bottom: 1rem;
+}
 
- :host ::ng-deep .p-fileupload .p-button-label{
-    color: white;
- }
+:host ::ng-deep .p-fileupload .p-button-label {
+  color: white;
+}
 
- :host ::ng-deep .p-button{
-    width:100%;
-    padding: 1rem;
-    border-radius: 1rem;
-    background-color: #f8f9fa;
-    border-color: transparent;
-    box-shadow: rgba(100, 100, 111, 0.2) 0px 7px 29px 0px;
- }
+:host ::ng-deep .p-button {
+  width: 100%;
+  padding: 1rem;
+  border-radius: 1rem;
+  background-color: #f8f9fa;
+  border-color: transparent;
+  box-shadow: rgba(100, 100, 111, 0.2) 0px 7px 29px 0px;
+}
 
- :host ::ng-deep .p-button-label{
-    font-size: 1.6rem;
-    color: black;
- }
+:host ::ng-deep .p-button-label {
+  font-size: 1.6rem;
+  color: black;
+}

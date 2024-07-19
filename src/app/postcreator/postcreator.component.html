@@ -1,78 +1,87 @@
 <p-toast></p-toast>
 
-<form class = "main-container" [formGroup]="postForm">
-    <p class = "secondaryText">Eagle Project</p>
-    <p class = "headerText">
-        Create a post
-    </p>
+<form class="main-container" [formGroup]="postForm">
+  <p class="secondaryText">Eagle Project</p>
+  <p class="headerText">Create a post</p>
 
-    <input 
-    type="text" 
-    pInputText 
-    formControlName = "title"
+  <input
+    type="text"
+    pInputText
+    formControlName="title"
     variant="filled"
     placeholder="Title"
-    class = "inputField"
-     />
+    class="inputField"
+  />
 
-     <textarea 
-     class = "inputField"
+  <textarea
+    class="inputField"
     rows="5"
-    cols="30" 
-    pInputTextarea 
-    formControlName = "description"
+    cols="30"
+    pInputTextarea
+    formControlName="description"
     variant="filled"
     placeholder="Description"
+  >
+  </textarea>
+
+  <p-dropdown
+    formControlName="category"
+    [options]="category"
+    optionLabel="name"
+    placeholder="Select a Category"
+    variant="filled"
+  />
+
+  <p class="secondaryText" style="margin-bottom: 1rem">
+    If Necessary, upload up to 3 relevant images
+  </p>
+
+  <p-fileUpload
+    mode="basic"
+    name="demo[]"
+    chooseIcon="pi pi-upload"
+    url="https://www.primefaces.org/cdn/api/upload.php"
+    accept="image/*"
+    maxFileSize="1000000"
+    (onUpload)="onImageUpload($event)"
+    [auto]="true"
+    chooseLabel="Browse"
+  />
+
+  <div
+    style="
+      display: flex;
+      justify-content: space-evenly;
+      width: 100%;
+      margin-bottom: 1rem;
+    "
+  >
+    <div
+      *ngFor="let image of imagePreviews; let i = index"
+      style="position: relative; display: inline-block"
     >
-    </textarea>
-
-    <p-dropdown 
-        formControlName="category" 
-        [options]="category"
-        optionLabel="name"
-        placeholder="Select a Category"
-        variant = "filled" />
-
-    <p class = "secondaryText" style ="margin-bottom: 1rem;">If Necessary, upload up to 3 relevant images</p>
-
-    <p-fileUpload
-    mode="basic" 
-    name="demo[]" 
-    chooseIcon="pi pi-upload" 
-    url="https://www.primefaces.org/cdn/api/upload.php" 
-    accept="image/*" maxFileSize="1000000" 
-    (onUpload)="onImageUpload($event)" 
-    [auto]="true" 
-    chooseLabel="Browse" />
-
-
-    <div style="display: flex; justify-content: space-evenly; width: 100%; margin-bottom: 1rem;">
-        <div *ngFor="let image of imagePreviews; let i = index" style="position: relative; display: inline-block;">
-          <button (click)="deleteImage(i)" style="
-          position: absolute; 
-          top: -10px; 
-          right: -10px; 
-          background: red; 
-          color: white; 
-          border: none; 
-          border-radius: 50%; 
-          width: 24px; 
-          height: 24px; 
-          cursor: pointer; 
+      <button
+        (click)="deleteImage(i)"
+        style="
+          position: absolute;
+          top: -10px;
+          right: -10px;
+          background: red;
+          color: white;
+          border: none;
+          border-radius: 50%;
+          width: 24px;
+          height: 24px;
+          cursor: pointer;
           z-index: 10;
-        ">
+        "
+      >
         X
       </button>
-          <p-image 
-            [src]="image"
-            [preview]="true" 
-            alt="Image" 
-            width="250">
-          </p-image>
-        </div>
+      <p-image [src]="image" [preview]="true" alt="Image" width="250">
+      </p-image>
     </div>
+  </div>
 
-    <p-button label="Submit" (click) = "submit()"/>
-        
+  <p-button label="Submit" (click)="submit()" />
 </form>
-

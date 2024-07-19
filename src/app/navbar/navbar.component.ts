@@ -1,7 +1,7 @@
 import { Component } from '@angular/core';
-import {MenubarModule} from 'primeng/menubar'; 
+import { MenubarModule } from 'primeng/menubar';
 import { RouterLink } from '@angular/router';
-import { Ripple} from 'primeng/ripple';
+import { Ripple } from 'primeng/ripple';
 import { FirebaseService } from '../firebase.service';
 import { CommonModule } from '@angular/common';
 import { ButtonModule } from 'primeng/button';
@@ -12,21 +12,23 @@ import { PrimeNGConfig } from 'primeng/api';
   standalone: true,
   imports: [CommonModule, MenubarModule, RouterLink, ButtonModule, Ripple],
   templateUrl: './navbar.component.html',
-  styleUrl: './navbar.component.css'
+  styleUrl: './navbar.component.css',
 })
 export class NavbarComponent {
   isLoggedIn: boolean;
 
-  constructor(private firebaseService: FirebaseService, private primengConfig: PrimeNGConfig){
-   this.isLoggedIn = false;
+  constructor(
+    private firebaseService: FirebaseService,
+    private primengConfig: PrimeNGConfig,
+  ) {
+    this.isLoggedIn = false;
   }
 
-  ngOnInit(){
+  ngOnInit() {
     this.primengConfig.ripple = true;
-    this.firebaseService.isLoggedIn$().subscribe((loginStatus) =>{
-      console.log("This is if we are still logged in or not" + loginStatus);
-      this.isLoggedIn = loginStatus}
-    );
+    this.firebaseService.isLoggedIn$().subscribe((loginStatus) => {
+      console.log('This is if we are still logged in or not' + loginStatus);
+      this.isLoggedIn = loginStatus;
+    });
   }
-
 }

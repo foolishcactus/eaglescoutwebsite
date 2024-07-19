@@ -1,131 +1,130 @@
-button{
-    width:100px;
-    padding: 10px;
-    height: 100px;
-    background-color: red;
+button {
+  width: 100px;
+  padding: 10px;
+  height: 100px;
+  background-color: red;
 }
 
-.primaryContainer{
-    width: 100vw; 
-    height: 92vh; 
-    background-color: #f4f3f2; 
-    display: flex;
-    justify-content: center;
-    align-items: center;
+.primaryContainer {
+  width: 100vw;
+  height: 92vh;
+  background-color: #f4f3f2;
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
 
-
-
-.postSummary{
-    width: 50vw;
-    height: 75vh; 
-    background-color: white;   
-    border-radius: 3rem;
-    box-shadow: rgba(50, 50, 93, 0.25) 0px 50px 100px -20px, rgba(0, 0, 0, 0.3) 0px 30px 60px -30px, rgba(10, 37, 64, 0.35) 0px -2px 6px 0px inset;
-    padding: 8rem;
-    display: flex;
-    flex-direction: column;
-    justify-content: space-between;
+.postSummary {
+  width: 50vw;
+  height: 75vh;
+  background-color: white;
+  border-radius: 3rem;
+  box-shadow:
+    rgba(50, 50, 93, 0.25) 0px 50px 100px -20px,
+    rgba(0, 0, 0, 0.3) 0px 30px 60px -30px,
+    rgba(10, 37, 64, 0.35) 0px -2px 6px 0px inset;
+  padding: 8rem;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
 }
 
-.postContainer{
-    display: flex;
-    flex-direction: row;
-    justify-content: space-between;
-    margin-bottom: 5vh;
+.postContainer {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  margin-bottom: 5vh;
 }
 
-.postTitle{
-    font-size: 2.4rem;
-    font-weight: 500; 
-    font-family: 'Nunito', sans-serif;
-    margin: 0;
+.postTitle {
+  font-size: 2.4rem;
+  font-weight: 500;
+  font-family: "Nunito", sans-serif;
+  margin: 0;
 }
 
-.postDescription{
-    font-size: 1.6rem;
-    color: #003366;
-    font-weight: 300;
-    font-family: 'Nunito', sans-serif; 
-    margin: 0;
+.postDescription {
+  font-size: 1.6rem;
+  color: #003366;
+  font-weight: 300;
+  font-family: "Nunito", sans-serif;
+  margin: 0;
 }
 
-.orgSummary{
-    width: 30vw;
-    height: 65vh;
-    background-color: white;
-    border-radius: 3rem;
-    position: absolute;
-    bottom: 0;
-    padding: 5rem;
-    display: flex;
-    align-items: center;
-    flex-direction: column;
-    padding-top: 7vh;
-    padding-bottom: 15vh;
-    justify-content: space-between;
+.orgSummary {
+  width: 30vw;
+  height: 65vh;
+  background-color: white;
+  border-radius: 3rem;
+  position: absolute;
+  bottom: 0;
+  padding: 5rem;
+  display: flex;
+  align-items: center;
+  flex-direction: column;
+  padding-top: 7vh;
+  padding-bottom: 15vh;
+  justify-content: space-between;
 }
 
-.orgName{
-    font-size: 3.6rem; 
-    font-weight: 700; 
-    font-family: 'Roboto', sans-serif;
-    margin: 0;
-    margin-bottom: 1rem;
+.orgName {
+  font-size: 3.6rem;
+  font-weight: 700;
+  font-family: "Roboto", sans-serif;
+  margin: 0;
+  margin-bottom: 1rem;
 }
 
-.orgAddress{
-    font-size: 1.2rem;
-    color: #003366;
-    font-weight: 300;
-    font-family: 'Nunito', sans-serif;
-    margin: 0;
+.orgAddress {
+  font-size: 1.2rem;
+  color: #003366;
+  font-weight: 300;
+  font-family: "Nunito", sans-serif;
+  margin: 0;
 }
 
-.orgDescription{
-    font-size: 1.6rem;
-    font-weight: 500; 
-    color: black;
-    font-family: 'Nunito', sans-serif;
-    
-
+.orgDescription {
+  font-size: 1.6rem;
+  font-weight: 500;
+  color: black;
+  font-family: "Nunito", sans-serif;
 }
 
-:host ::ng-deep .p-button{
-    width:100%;
-    padding: 1rem;
-    border-radius: 1rem;
+:host ::ng-deep .p-button {
+  width: 100%;
+  padding: 1rem;
+  border-radius: 1rem;
 
-    border-color: transparent;
-    
-    transition: transform 0.3s, box-shadow 0.3s; /* Smooth transition for the hover effect */
-  }
+  border-color: transparent;
 
-  
+  transition:
+    transform 0.3s,
+    box-shadow 0.3s; /* Smooth transition for the hover effect */
+}
 
-  :host ::ng-deep .p-button-label{
-    font-size: 1.8rem;
-  }
+:host ::ng-deep .p-button-label {
+  font-size: 1.8rem;
+}
 
-  :host ::ng-deep .p-chip{
-    padding: 0.5rem;
-  }
+:host ::ng-deep .p-chip {
+  padding: 0.5rem;
+}
 
 /* Website for this background: https://www.gradient-animator.com/ */
 .animatedBackground {
-    background: linear-gradient(90deg, #ef4443, #783C55, #003366);
-    background-size: 400% 400%;
-    width: 30vw;
-    height: 75vh;
-    position: relative;
-    
-    
-    border-radius: 3rem;
-    box-shadow: rgba(50, 50, 93, 0.25) -50px 50px 100px -20px, 
-    rgba(0, 0, 0, 0.3) -30px 30px 60px -30px, 
+  background: linear-gradient(90deg, #ef4443, #783c55, #003366);
+  background-size: 400% 400%;
+  width: 30vw;
+  height: 75vh;
+  position: relative;
+
+  border-radius: 3rem;
+  box-shadow:
+    rgba(50, 50, 93, 0.25) -50px 50px 100px -20px,
+    rgba(0, 0, 0, 0.3) -30px 30px 60px -30px,
     rgba(10, 37, 64, 0.35) -2px -2px 6px 0px inset;
 
-    -webkit-animation: AnimationName 30s ease infinite;
-    -moz-animation: AnimationName 30s ease infinite;
-    animation: AnimationName 30s ease infinite;
+  -webkit-animation: AnimationName 30s ease infinite;
+  -moz-animation: AnimationName 30s ease infinite;
+  animation: AnimationName 30s ease infinite;
 }

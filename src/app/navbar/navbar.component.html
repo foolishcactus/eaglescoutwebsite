@@ -1,21 +1,48 @@
 <p-menubar>
-    <ng-template pTemplate="start">
-        <a [routerLink]="['/']" class="logo">
-          <img src="../../assets/images/eaglerankpatch.png" alt="Logo" class="logo-image">
-          <span class="website-name">Eagle Endeavors</span>
-        </a>
-    </ng-template>
+  <ng-template pTemplate="start">
+    <a [routerLink]="['/']" class="logo">
+      <img
+        src="../../assets/images/eaglerankpatch.png"
+        alt="Logo"
+        class="logo-image"
+      />
+      <span class="website-name">Eagle Endeavors</span>
+    </a>
+  </ng-template>
 
-    <ng-template pTemplate="end">
-        <div class = "p-menuitem-wrapper">
-            <a pRipple [routerLink]="['/resources']" class="p-menuitem-link">Resources</a>
-            <a pRipple [routerLink]="['/guide']" class="p-menuitem-link">Guide</a>
-            <a pRipple [routerLink]="['/projectfinder']" class="p-menuitem-link">Project Finder</a>
-            <a pRipple [routerLink]="['/showcase']" class="p-menuitem-link">Showcase</a>
-            <a pRipple *ngIf = "!isLoggedIn" [routerLink]="['/apply']" class="p-menuitem-link">Apply</a>
-            <a pRipple *ngIf = "!isLoggedIn" [routerLink]="['/login']" class="p-menuitem-link">Login</a>
-            <a pRipple *ngIf = "isLoggedIn" [routerLink] = "['/user-dashboard']" class = "p-menuitem-link">Dashboard</a>
-        </div>
-        
-    </ng-template>
+  <ng-template pTemplate="end">
+    <div class="p-menuitem-wrapper">
+      <a pRipple [routerLink]="['/resources']" class="p-menuitem-link"
+        >Resources</a
+      >
+      <a pRipple [routerLink]="['/guide']" class="p-menuitem-link">Guide</a>
+      <a pRipple [routerLink]="['/projectfinder']" class="p-menuitem-link"
+        >Project Finder</a
+      >
+      <a pRipple [routerLink]="['/showcase']" class="p-menuitem-link"
+        >Showcase</a
+      >
+      <a
+        pRipple
+        *ngIf="!isLoggedIn"
+        [routerLink]="['/apply']"
+        class="p-menuitem-link"
+        >Apply</a
+      >
+      <a
+        pRipple
+        *ngIf="!isLoggedIn"
+        [routerLink]="['/login']"
+        class="p-menuitem-link"
+        >Login</a
+      >
+      <a
+        pRipple
+        *ngIf="isLoggedIn"
+        [routerLink]="['/user-dashboard']"
+        class="p-menuitem-link"
+        >Dashboard</a
+      >
+    </div>
+  </ng-template>
 </p-menubar>

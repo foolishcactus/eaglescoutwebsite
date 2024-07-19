@@ -1,55 +1,88 @@
-<div class = "main-container">
-    <p-toast></p-toast>
-    
+<div class="main-container">
+  <p-toast></p-toast>
 
-        <form class="component-container" [formGroup]="emailForm">
+  <form class="component-container" [formGroup]="emailForm">
+    <p class="header-text" style="font-size: 3.5rem">Organization Login</p>
 
-            <p class= "header-text" style = "font-size: 3.5rem;">Organization Login</p>
+    <div>
+      <div class="input-container">
+        <p-iconField iconPosition="left">
+          <p-inputIcon styleClass="pi pi-envelope" />
+          <input
+            class="inputfield"
+            pInputText
+            id="email"
+            type="text"
+            pInputText
+            formControlName="email"
+            placeholder="Email"
+          />
+        </p-iconField>
 
-            <div>
-                <div class = "input-container">
-
-                    <p-iconField  iconPosition="left">
-                        <p-inputIcon styleClass="pi pi-envelope" />
-                        <input class = "inputfield" pInputText id="email" type="text" pInputText formControlName="email" placeholder="Email" />
-                    </p-iconField>
-
-                    <div *ngIf="emailForm.get('email')?.invalid && (emailForm.get('email')?.dirty || emailForm.get('email')?.touched)">
-                        <small *ngIf="emailForm.get('email')?.errors?.['required']" class="p-error">Email is required.</small>
-                        <small *ngIf="emailForm.get('email')?.errors?.['email']" class="p-error">Invalid email address.</small>
-                    </div>
-                </div>
-    
-              
-    
-              
-                <div class = "input-container" style="margin-top: 1vh;" >
-                    <p-iconField  iconPosition="left">
-                        <p-inputIcon styleClass="pi pi-lock" />
-                        <input class = "inputfield" pInputText id="password" type="text" pInputText formControlName="password" placeholder="Password" />
-                    </p-iconField>
-                </div>
-    
-            </div>
-
-            
-          
-            <div class="input-container">
-                <button class = "inputfield submitButton" [ngStyle]="{'background-color': emailForm.invalid ? '#f4f3f2' : '#003366', 'color': emailForm.invalid ? 'black' : 'white' }" (click) = "signIn()" type="submit" pButton label="Submit" [disabled]="emailForm.invalid"></button>
-                <button class = "inputfield registerButton" pButton label="Register"></button>
-            </div>
-        </form>
-
-        <div class = "rightPortion">
-            <img src = "../../assets/images/loginbest.png">
-           <p class = "subheader-text" style = "color: white;">Join Our Network to Share Your Projects!</p>
-           <p class = "body-text" style = "color: white;">Log in now to post your organization's projects and help Scouts make a positive impact in your community.</p>
-            
+        <div
+          *ngIf="
+            emailForm.get('email')?.invalid &&
+            (emailForm.get('email')?.dirty || emailForm.get('email')?.touched)
+          "
+        >
+          <small
+            *ngIf="emailForm.get('email')?.errors?.['required']"
+            class="p-error"
+            >Email is required.</small
+          >
+          <small
+            *ngIf="emailForm.get('email')?.errors?.['email']"
+            class="p-error"
+            >Invalid email address.</small
+          >
         </div>
+      </div>
 
-        
+      <div class="input-container" style="margin-top: 1vh">
+        <p-iconField iconPosition="left">
+          <p-inputIcon styleClass="pi pi-lock" />
+          <input
+            class="inputfield"
+            pInputText
+            id="password"
+            type="text"
+            pInputText
+            formControlName="password"
+            placeholder="Password"
+          />
+        </p-iconField>
+      </div>
+    </div>
+
+    <div class="input-container">
+      <button
+        class="inputfield submitButton"
+        [ngStyle]="{
+          'background-color': emailForm.invalid ? '#f4f3f2' : '#003366',
+          color: emailForm.invalid ? 'black' : 'white',
+        }"
+        (click)="signIn()"
+        type="submit"
+        pButton
+        label="Submit"
+        [disabled]="emailForm.invalid"
+      ></button>
+      <button
+        class="inputfield registerButton"
+        pButton
+        label="Register"
+      ></button>
+    </div>
+  </form>
+
+  <div class="rightPortion">
+    <img src="../../assets/images/loginbest.png" />
+    <p class="subheader-text" style="color: white">
+      Join Our Network to Share Your Projects!
+    </p>
+    <p class="body-text" style="color: white">
+      Log in now to post your organization's projects and help Scouts make a
+      positive impact in your community.
+    </p>
+  </div>
 </div>
-
-
-
-

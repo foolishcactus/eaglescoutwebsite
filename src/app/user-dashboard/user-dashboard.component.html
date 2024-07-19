@@ -2,70 +2,120 @@
 <p-confirmDialog />
 
 <div *ngIf="this.firebaseService.currentUser | async as user">
+  <!-- Display user info -->
 
-    
-
-    <!-- Display user info -->
-
-    <div class = "primaryContainer">
-        <div class = "animatedBackground">
-            <div class="orgSummary">
-                <div style = "text-align: center; margin-top: 3.5vh">
-                    <p class = "orgName">{{currentOrganization?.name}}</p>
-                    <p class = "orgAddress">{{currentOrganization?.street}}, {{currentOrganization?.city}}, {{currentOrganization?.state}}, {{currentOrganization?.zipcode}} </p>
-                    <p class = "orgDescription">{{currentOrganization?.description}}</p>
-                </div>
-                
-                
-
-                <div style = "width: 100%">
-                    <p-button [style]="{ backgroundColor: '#f4f3f2', color: 'black', marginBottom: '1vh'}" pRipple label="Edit Profile"/>
-                    <p-button [style]="{ backgroundColor: '#ef4443', color: 'white'}" pRipple label="Logout" (click) = "logout()"/>
-                </div>
-            </div>
+  <div class="primaryContainer">
+    <div class="animatedBackground">
+      <div class="orgSummary">
+        <div style="text-align: center; margin-top: 3.5vh">
+          <p class="orgName">{{ currentOrganization?.name }}</p>
+          <p class="orgAddress">
+            {{ currentOrganization?.street }}, {{ currentOrganization?.city }},
+            {{ currentOrganization?.state }}, {{ currentOrganization?.zipcode }}
+          </p>
+          <p class="orgDescription">{{ currentOrganization?.description }}</p>
         </div>
-        <div class = "postSummary">
-            <p style = "font-size: 4.8rem; font-weight: 700; font-family: 'Roboto', sans-serif; margin: 0; width: 100%; margin-top: 5vh; margin-bottom: 5vh;">
-                Your Posts
-            </p>
 
-            <div style = "display: flex; flex-direction: column; width: 100%; height: 80%;">
-                <div class = "postContainer" *ngFor  = "let post of organizationPosts"> 
-                    <div style = "display: flex; flex-direction: column; width: 70%; text-align: left;">
-                        <p class = "postTitle">{{post.title}}</p>
-                        <p class = "postDescription">{{post.description}}</p>
-                    </div>
-     
-                    
-                    
-                    <div style = "width: 30%; display: flex; justify-content: space-evenly;">
-     
-                     <p-chip [style]="{ backgroundColor: getCategoryData(post.category).color }">
-                         <span class="material-icons">{{ getCategoryData(post.category).icon }}</span>
-                         <span style="margin-left: 0.5rem; margin-right: 0.5rem;">{{ post.category }}</span>
-                     </p-chip>
-     
-                     <p-button [style]="{ backgroundColor: '#f4f3f2', color: 'black', marginBottom: '1vh', width: '100%'}" pRipple icon="pi pi-pen-to-square"/>
-                     <p-button (click)="confirmDelete($event, post)" [style]="{ backgroundColor: '#ef4443', color: 'black', width: '100%'}" pRipple icon="pi pi-trash"/>  
-                     
-                    </div>
-
-                    <p-overlayPanel #op [style]="{ width: '10vw' }">
-                        <div style = "width: 100%; display: flex; flex-direction: column;">
-                            
-                        </div>
-                        
-                    </p-overlayPanel>
-
-                </div>
-            </div>
-            
+        <div style="width: 100%">
+          <p-button
+            [style]="{
+              backgroundColor: '#f4f3f2',
+              color: 'black',
+              marginBottom: '1vh',
+            }"
+            pRipple
+            label="Edit Profile"
+          />
+          <p-button
+            [style]="{ backgroundColor: '#ef4443', color: 'white' }"
+            pRipple
+            label="Logout"
+            (click)="logout()"
+          />
         </div>
+      </div>
     </div>
-    <p>Welcome, {{ user.displayName }}</p>
-    <p>Email: {{ user.email }}</p>
+    <div class="postSummary">
+      <p
+        style="
+          font-size: 4.8rem;
+          font-weight: 700;
+          font-family: Roboto, sans-serif;
+          margin: 0;
+          width: 100%;
+          margin-top: 5vh;
+          margin-bottom: 5vh;
+        "
+      >
+        Your Posts
+      </p>
 
-    <button (click) = "show()">Show</button>
-    <button (click) = "addOrganization()">Add Organization</button>
-    <button (click) = "getOrganizationByEmail()">Get Organization</button>
+      <div
+        style="display: flex; flex-direction: column; width: 100%; height: 80%"
+      >
+        <div class="postContainer" *ngFor="let post of organizationPosts">
+          <div
+            style="
+              display: flex;
+              flex-direction: column;
+              width: 70%;
+              text-align: left;
+            "
+          >
+            <p class="postTitle">{{ post.title }}</p>
+            <p class="postDescription">{{ post.description }}</p>
+          </div>
+
+          <div style="width: 30%; display: flex; justify-content: space-evenly">
+            <p-chip
+              [style]="{
+                backgroundColor: getCategoryData(post.category).color,
+              }"
+            >
+              <span class="material-icons">{{
+                getCategoryData(post.category).icon
+              }}</span>
+              <span style="margin-left: 0.5rem; margin-right: 0.5rem">{{
+                post.category
+              }}</span>
+            </p-chip>
+
+            <p-button
+              (click)="editPost(post)"
+              [style]="{
+                backgroundColor: '#f4f3f2',
+                color: 'black',
+                marginBottom: '1vh',
+                width: '100%',
+              }"
+              pRipple
+              icon="pi pi-pen-to-square"
+            />
+            <p-button
+              (click)="confirmDelete($event, post)"
+              [style]="{
+                backgroundColor: '#ef4443',
+                color: 'black',
+                width: '100%',
+              }"
+              pRipple
+              icon="pi pi-trash"
+            />
+          </div>
+
+          <p-overlayPanel #op [style]="{ width: '10vw' }">
+            <div
+              style="width: 100%; display: flex; flex-direction: column"
+            ></div>
+          </p-overlayPanel>
+        </div>
+      </div>
+    </div>
+  </div>
+  <p>Welcome, {{ user.displayName }}</p>
+  <p>Email: {{ user.email }}</p>
+
+  <button (click)="show()">Show</button>
+  <button (click)="addOrganization()">Add Organization</button>
+  <button (click)="getOrganizationByEmail()">Get Organization</button>
 </div>

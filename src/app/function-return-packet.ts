@@ -1,5 +1,5 @@
 export interface FunctionReturnPacket {
-    wasSuccess: boolean,
-    message: string,
-    data?: any;
+  wasSuccess: boolean;
+  message: string;
+  data?: any;
 }

@@ -1,9 +1,9 @@
 {
-    "apiKey": "AIzaSyC3yk4qTGPIaDqZ8CYVnNCkaQI3EEkmlXg",
-    "authDomain": "eaglescoutwebsite.firebaseapp.com",
-    "projectId": "eaglescoutwebsite",
-    "storageBucket": "eaglescoutwebsite.appspot.com",
-    "messagingSenderId": "337165863245",
-    "appId": "1:337165863245:web:747ea9574211913cb7cf04",
-    "measurementId": "G-ZPXTERDPQL"
+  "apiKey": "AIzaSyC3yk4qTGPIaDqZ8CYVnNCkaQI3EEkmlXg",
+  "authDomain": "eaglescoutwebsite.firebaseapp.com",
+  "projectId": "eaglescoutwebsite",
+  "storageBucket": "eaglescoutwebsite.appspot.com",
+  "messagingSenderId": "337165863245",
+  "appId": "1:337165863245:web:747ea9574211913cb7cf04",
+  "measurementId": "G-ZPXTERDPQL"
 }

@@ -230,6 +230,35 @@ export const createPost = onCall(async (request) => {
   
 });
 
+export const editPost = onCall (async (request) =>{
+  try{
+    
+    
+    // Query for the document to update
+    const querySnapshot = await db.collection('posts').where('title', '==', request.data.oldTitleForIdentificationInEditMode).get();
+
+    if (querySnapshot.empty) {
+      return {wasSuccess: false, message: "Couldn't find post"};
+    }
+
+    // Assume there's only one document with the specified title
+    const docRef = querySnapshot.docs[0].ref;
+
+    // Update the document with new data
+    await docRef.update({
+      title: request.data.title,
+      description: request.data.description,
+      category: request.data.category,
+      images: request.data.images,
+    });
+
+    return {wasSuccess: true, message: "Post successfully edited"};
+
+  }catch(e){
+    return {wasSuccess: false, message: "Couldn't edit post"};
+  }
+})
+
 export const deletePost = onCall (async (request) =>{
   try{
     const postsRef = db.collection('posts');
