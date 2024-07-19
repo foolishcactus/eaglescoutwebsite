@@ -15,6 +15,9 @@ import { provideAnimations } from '@angular/platform-browser/animations';
 import { getFunctions, provideFunctions } from '@angular/fire/functions';
 import { provideStorage, getStorage } from '@angular/fire/storage';
 
+import { ToastModule } from 'primeng/toast';
+import { MessageService } from 'primeng/api';
+
 export const appConfig: ApplicationConfig = {
   providers: [
     provideAnimations(),
@@ -37,5 +40,7 @@ export const appConfig: ApplicationConfig = {
     provideFunctions(() => getFunctions()),
     provideStorage(() => getStorage()),
     provideHttpClient(withFetch()),
+    importProvidersFrom(ToastModule),
+    MessageService,
   ],
 };

@@ -7,4 +7,5 @@ export interface Organization {
   email: string;
   isVerified: boolean;
   name: string;
+  numOfActivePosts?: number;
 }

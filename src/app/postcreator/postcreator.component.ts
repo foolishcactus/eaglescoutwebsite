@@ -16,11 +16,9 @@ import { DropdownModule } from 'primeng/dropdown';
 import { ImageModule } from 'primeng/image';
 import { FileUploadModule } from 'primeng/fileupload';
 import { ButtonModule } from 'primeng/button';
-
-import { ToastModule } from 'primeng/toast';
-import { MessagesModule } from 'primeng/messages';
-import { MessageService } from 'primeng/api';
 import { DynamicDialogConfig } from 'primeng/dynamicdialog';
+
+import { ToastService } from '../toast.service';
 
 import { Post } from '../post';
 import { FunctionReturnPacket } from '../function-return-packet';
@@ -37,10 +35,8 @@ import { FunctionReturnPacket } from '../function-return-packet';
     ImageModule,
     InputTextareaModule,
     DropdownModule,
-    ToastModule,
-    MessagesModule,
   ],
-  providers: [DialogService, MessageService],
+  providers: [DialogService],
   templateUrl: './postcreator.component.html',
   styleUrl: './postcreator.component.css',
 })
@@ -65,16 +61,17 @@ export class PostcreatorComponent {
   ];
 
   images: File[] = [];
-  prefilledImages: File[] = [];
-  preFillImageUrls: string[] = [];
-  imagePreviews: string[] = [];
-  imageUrlsMarkedForDatabaseDeletion: string[] = [];
+  imagesUrls: string[] = [];
+  oldImages: File[] = [];
+  oldImageUrls: string[] = [];
+
+  urlsMarkedForDatabaseDelete: string[] = [];
 
   constructor(
     private fb: FormBuilder,
     private dialogConfig: DynamicDialogConfig,
-    private messageService: MessageService,
     private firebaseService: FirebaseService,
+    private toastService: ToastService,
   ) {
     this.postForm = this.fb.group({
       title: ['', [Validators.required, Validators.minLength(1)]],
@@ -87,6 +84,8 @@ export class PostcreatorComponent {
   }
 
   async ngOnInit() {
+    this.toastService.showSuccess('Success', 'This is a success message');
+
     if (this.dialogConfig?.data?.inEditMode) {
       console.log('We are in edit mode.');
       const { title, description, category, images } =
@@ -107,15 +106,12 @@ export class PostcreatorComponent {
       // Convert image URLs to File objects and pre-fill the images array
       for (const url of images) {
         const file = await this.firebaseService.urlToFile(url);
-        this.preFillImageUrls.push(url);
-        this.prefilledImages.push(file);
+        this.oldImageUrls.push(url);
+        this.oldImages.push(file);
+        this.imagesUrls.push(url);
         this.images.push(file);
       }
 
-      this.imagePreviews = images;
-      console.log(
-        'This is prefilled Images ' + JSON.stringify(this.prefilledImages),
-      );
       console.log('This is prefilled Images ' + JSON.stringify(this.images));
     } else {
       this.postForm = this.fb.group({
@@ -125,21 +121,18 @@ export class PostcreatorComponent {
       });
     }
   }
+
   deleteImage(index: number) {
     // Remove from imageUrls array
-    const imageUrl = this.imagePreviews[index];
-    this.imagePreviews.splice(index, 1);
+    const imageUrl = this.imagesUrls[index];
 
-    // Remove the corresponding file from the images array
-    const fileToDelete = this.images[index];
-    this.images.splice(index, 1);
-
-    // If the file is prefilled, also remove from prefilledImages array
-    const prefilledIndex = this.prefilledImages.indexOf(fileToDelete);
-    if (prefilledIndex !== -1) {
-      this.prefilledImages.splice(prefilledIndex, 1);
-      this.imageUrlsMarkedForDatabaseDeletion.push(imageUrl);
+    //Find if it is an old image or not
+    let oldUrlIndex = this.oldImageUrls.indexOf(imageUrl);
+    if (oldUrlIndex !== -1) {
+      this.urlsMarkedForDatabaseDelete.push(imageUrl);
     }
+    this.imagesUrls.splice(index, 1);
+    this.images.splice(index, 1);
   }
 
   onImageUpload(event: any) {
@@ -148,82 +141,77 @@ export class PostcreatorComponent {
     console.log(file);
 
     if (this.images.length >= 3) {
-      this.messageService.add({
-        severity: 'error',
-        summary: 'Image Upload Failed',
-        detail: 'Please enter only 3 images, you hit the limit',
-      });
+      this.toastService.showError(
+        'Image Upload Failed.',
+        'Please enter only 3 images, you hit the limit.',
+      );
       console.log('Image upload limit hit');
       return;
     }
 
     if (file) {
       this.images.push(file);
-      this.imagePreviews.push(URL.createObjectURL(file));
+      this.imagesUrls.push(URL.createObjectURL(file));
     }
   }
 
   submit() {
     if (this.postForm.valid) {
-      this.messageService.add({
-        severity: 'info',
-        summary: 'Submitting Form...',
-      });
-      console.log('Form is valid');
-
+      this.toastService.showInfo('Status', 'Submitting Form...');
       this.createPost();
     } else {
-      this.messageService.add({
-        severity: 'error',
-        summary: 'Form Error',
-        detail: 'Please fill out entire form',
-      });
+      this.toastService.showError('Form Error', 'Please fill out entire form.');
     }
     console.log('Trying to submit the form');
   }
 
   async createPost() {
     const { title, description, category } = this.postForm.value;
+    let updatedUrls: string[] = [];
 
     try {
-      let imageUrls: string[] = [];
-
-      // Filter out new images (those not in prefilledImages)
-      const newImages = this.images.filter(
-        (file) => !this.prefilledImages.includes(file),
-      );
-
-      if (newImages.length > 0) {
-        // Upload new images if there are any
-        let newImageUrls = await this.firebaseService.uploadImages(newImages);
-
-        // Remove URLs marked for deletion from preFillImageUrls and delete from storage
-        for (let url of this.imageUrlsMarkedForDatabaseDeletion) {
-          const index = this.preFillImageUrls.indexOf(url);
-          if (index !== -1) {
-            this.preFillImageUrls.splice(index, 1);
-          }
-          await this.firebaseService.deleteImageWithURL(url);
-        }
-
-        // Combine prefilled URLs with new URLs
-        imageUrls = [...this.preFillImageUrls, ...newImageUrls];
-      } else {
-        // If no new images, use only pre-filled URLs
-        imageUrls = [...this.preFillImageUrls];
-      }
-
+      //Deleting from database and updating arrays
       let currentUserEmail = this.firebaseService.getCurrentUser()?.email;
       if (!currentUserEmail) {
         console.error('Cannot find current user email');
         return;
       }
 
+      for (let urlMarkedForDelete of this.urlsMarkedForDatabaseDelete) {
+        await this.firebaseService.deleteImageWithURL(urlMarkedForDelete);
+        let oldUrlIndex = this.oldImageUrls.indexOf(urlMarkedForDelete);
+
+        this.oldImageUrls.splice(oldUrlIndex, 1);
+        this.oldImages.splice(oldUrlIndex, 1);
+      }
+
+      // Filter out new images (those not in prefilledImages)
+      const newImages = this.images.filter(
+        (file) => !this.oldImages.includes(file),
+      );
+
+      console.log('This is the new images array ' + JSON.stringify(newImages));
+
+      if (newImages.length > 0) {
+        // Upload new images if there are any
+        let newImageUrls = await this.firebaseService.uploadImages(newImages);
+
+        // Remove URLs marked for deletion from preFillImageUrls and delete from storage
+
+        // Combine prefilled URLs with new URLs
+        updatedUrls = [...this.oldImageUrls, ...newImageUrls];
+      } else {
+        // If no new images, use only pre-filled URLs
+        updatedUrls = [...this.oldImageUrls];
+      }
+
+      console.log('This is the updated urls ' + JSON.stringify(updatedUrls));
+
       const post: Post = {
         title,
         description,
         category: category.name,
-        images: imageUrls,
+        images: updatedUrls,
         createdAt: new Date(),
       };
 
@@ -236,30 +224,23 @@ export class PostcreatorComponent {
         );
 
       if (returnVal.wasSuccess) {
-        this.messageService.add({
-          severity: 'success',
-          summary: returnVal.message,
-        });
+        this.toastService.showSuccess('Success', returnVal.message);
       } else {
-        this.messageService.add({
-          severity: 'error',
-          summary: returnVal.message,
-        });
+        this.toastService.showError('Error', returnVal.message);
       }
 
-      this.postForm.reset();
-      this.images = [];
-      this.imagePreviews = [];
+      this.resetEverything();
     } catch (error: any) {
-      this.postForm.reset();
-      this.images = [];
-      this.prefilledImages = [];
-      this.imagePreviews = [];
-
-      this.messageService.add({
-        severity: 'error',
-        summary: 'Could not create post' + error,
-      });
+      this.resetEverything();
+      this.toastService.showError('Error', "Couldn't create post.");
     }
+  }
+
+  resetEverything() {
+    this.postForm.reset();
+    this.images = [];
+    this.imagesUrls = [];
+    this.oldImageUrls = [];
+    this.oldImages = [];
   }
 }

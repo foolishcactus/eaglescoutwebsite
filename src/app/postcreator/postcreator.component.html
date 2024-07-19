@@ -1,5 +1,3 @@
-<p-toast></p-toast>
-
 <form class="main-container" [formGroup]="postForm">
   <p class="secondaryText">Eagle Project</p>
   <p class="headerText">Create a post</p>
@@ -57,7 +55,7 @@
     "
   >
     <div
-      *ngFor="let image of imagePreviews; let i = index"
+      *ngFor="let image of imagesUrls; let i = index"
       style="position: relative; display: inline-block"
     >
       <button

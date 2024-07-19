@@ -53,6 +53,10 @@ export class GuideComponent {
   activeSection: string = '';
   scrollProgress: number = 0;
 
+  constructor() {}
+
+  ngOnInit() {}
+
   @HostListener('window:scroll', ['$event'])
   onWindowScroll() {
     //const offset = window.scrollY;

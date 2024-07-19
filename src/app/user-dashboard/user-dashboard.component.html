@@ -1,4 +1,3 @@
-<p-toast />
 <p-confirmDialog />
 
 <div *ngIf="this.firebaseService.currentUser | async as user">
@@ -36,19 +35,52 @@
       </div>
     </div>
     <div class="postSummary">
-      <p
+      <div
         style="
-          font-size: 4.8rem;
-          font-weight: 700;
-          font-family: Roboto, sans-serif;
-          margin: 0;
           width: 100%;
           margin-top: 5vh;
           margin-bottom: 5vh;
+          display: flex;
+          flex-direction: row;
+          justify-content: space-between;
+          align-items: center;
         "
       >
-        Your Posts
-      </p>
+        <p
+          style="
+            font-size: 4.8rem;
+            font-weight: 700;
+            font-family: Roboto, sans-serif;
+            margin: 0;
+          "
+        >
+          Your Posts
+        </p>
+
+        <div>
+          <p-button
+            (click)="createPost()"
+            [disabled]="this.numOfActivePosts >= 3"
+            [style]="{
+              backgroundColor:
+                this.numOfActivePosts >= 3 ? '#cccccc' : '#003366',
+              color: this.numOfActivePosts >= 3 ? '#666666' : 'white',
+              width: '10vw',
+              padding: '1rem',
+            }"
+            pRipple
+            [icon]="this.numOfActivePosts >= 3 ? 'pi pi-lock' : 'pi pi-plus'"
+            label="Create Post"
+          ></p-button>
+
+          <p
+            *ngIf="this.numOfActivePosts >= 3"
+            style="color: red; margin-top: 0.5rem"
+          >
+            You have reached the maximum limit of posts.
+          </p>
+        </div>
+      </div>
 
       <div
         style="display: flex; flex-direction: column; width: 100%; height: 80%"
@@ -112,10 +144,4 @@
       </div>
     </div>
   </div>
-  <p>Welcome, {{ user.displayName }}</p>
-  <p>Email: {{ user.email }}</p>
-
-  <button (click)="show()">Show</button>
-  <button (click)="addOrganization()">Add Organization</button>
-  <button (click)="getOrganizationByEmail()">Get Organization</button>
 </div>

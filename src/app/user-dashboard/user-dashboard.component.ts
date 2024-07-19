@@ -9,9 +9,9 @@ import { ButtonModule } from 'primeng/button';
 import { ChipModule } from 'primeng/chip';
 import { OverlayPanelModule } from 'primeng/overlaypanel';
 import { ConfirmDialogModule } from 'primeng/confirmdialog';
-import { ConfirmationService, MessageService } from 'primeng/api';
-import { ToastModule } from 'primeng/toast';
+import { ConfirmationService } from 'primeng/api';
 import { Post } from '../post';
+import { ToastService } from '../toast.service';
 
 @Component({
   selector: 'app-user-dashboard',
@@ -23,9 +23,8 @@ import { Post } from '../post';
     ChipModule,
     OverlayPanelModule,
     ConfirmDialogModule,
-    ToastModule,
   ],
-  providers: [DialogService, ConfirmationService, MessageService],
+  providers: [DialogService, ConfirmationService],
   templateUrl: './user-dashboard.component.html',
   styleUrl: './user-dashboard.component.css',
 })
@@ -34,6 +33,7 @@ export class UserDashboardComponent {
   currentOrganization?: any;
   currentUser: User | null;
   organizationPosts: Post[] = [];
+  numOfActivePosts: number = 0;
 
   testPost = {
     category: 'Construction',
@@ -65,7 +65,7 @@ export class UserDashboardComponent {
     public firebaseService: FirebaseService,
     public dialogService: DialogService,
     private confirmationService: ConfirmationService,
-    private messageService: MessageService,
+    private toastService: ToastService,
   ) {
     this.currentUser = this.firebaseService.getCurrentUser();
   }
@@ -73,15 +73,8 @@ export class UserDashboardComponent {
   async ngOnInit(): Promise<void> {
     try {
       if (this.currentUser && this.currentUser.email) {
-        console.log('this is the current user email' + this.currentUser.email);
-        this.currentOrganization =
-          await this.firebaseService.getOrganizationByEmail({
-            email: this.currentUser.email,
-          });
-        this.organizationPosts =
-          await this.firebaseService.getPostsFromOrganization({
-            email: this.currentUser.email,
-          });
+        this.getDataForSignedInOrganization();
+        this.getPostsForThisOrganization();
         //this.organizationPosts = this.transformPostImages(this.organizationPosts);
       }
     } catch (error) {
@@ -89,57 +82,43 @@ export class UserDashboardComponent {
     }
   }
 
-  show() {
+  async createPost() {
     this.ref = this.dialogService.open(PostcreatorComponent, {});
+
+    this.ref.onClose.subscribe((result) => {
+      // Refresh the component or perform necessary actions
+      this.getDataForSignedInOrganization();
+      this.getPostsForThisOrganization();
+    });
+  }
+
+  async editPost(postToEdit: Post) {
+    this.ref = this.dialogService.open(PostcreatorComponent, {
+      data: {
+        post: postToEdit,
+        inEditMode: true,
+      },
+    });
+
+    this.ref.onClose.subscribe((result) => {
+      // Refresh the component or perform necessary actions
+      this.getPostsForThisOrganization();
+    });
   }
 
   logout() {
     this.firebaseService.logout();
   }
 
-  addOrganization() {
-    let organization: Organization = {
-      street: '1600 fargo',
-      zipcode: 72453,
-      state: 'Oklahoma',
-      city: 'Tulsa',
-      description: 'We love to help farmers',
-      email: 'jackfrancicso0000@gmail.com',
-      isVerified: false,
-      name: 'FarmersToHands',
-    };
-
-    this.firebaseService
-      .addOrganization(organization)
-      .then((messgage) => {
-        console.log(
-          'Adding organization was success here is the return:' +
-            JSON.stringify(messgage),
-        );
-      })
-      .catch((error: any) => {
-        console.log('We cannot get this thing to work');
-      });
-  }
-
-  async getOrganizationByEmail() {
-    console.log('We are running get org by email');
-    console.log('This is the current user' + JSON.stringify(this.currentUser));
-    console.log(
-      'This is the current user email' +
-        JSON.stringify(this.currentUser?.email),
-    );
+  async getDataForSignedInOrganization() {
     try {
       if (this.currentUser && this.currentUser.email) {
-        console.log('this is the current user email' + this.currentUser.email);
-        let currentOrganization =
+        this.currentOrganization =
           await this.firebaseService.getOrganizationByEmail({
             email: this.currentUser.email,
           });
-        console.log(
-          "this is the return value from get organization if it's successful" +
-            JSON.stringify(currentOrganization),
-        );
+
+        this.numOfActivePosts = this.currentOrganization.numOfActivePosts;
       }
     } catch (error) {
       console.error('Error fetching organization:', error);
@@ -174,46 +153,36 @@ export class UserDashboardComponent {
       rejectIcon: 'none',
 
       accept: () => {
-        this.messageService.add({
-          severity: 'info',
-          summary: 'Confirmed',
-          detail: 'Record deleted',
-        });
-
+        this.toastService.showSuccess('Success', 'Post Deleted');
         this.deletePost(post);
       },
       reject: () => {
-        this.messageService.add({
-          severity: 'error',
-          summary: 'Rejected',
-          detail: 'Cancelled',
-        });
+        this.toastService.showError('Error', 'Cancelled');
       },
     });
   }
 
-  async editPost(postToEdit: Post) {
-    this.ref = this.dialogService.open(PostcreatorComponent, {
-      data: {
-        post: postToEdit,
-        inEditMode: true,
-      },
-    });
+  async getPostsForThisOrganization() {
+    this.organizationPosts =
+      await this.firebaseService.getPostsFromOrganization({
+        email: this.currentUser?.email,
+      });
   }
 
   async deletePost(postToDelete: Post) {
     let deleteFromFirebaseIsSuccessful: boolean =
       await this.firebaseService.deletePost(postToDelete);
 
+    for (let url of postToDelete.images) {
+      await this.firebaseService.deleteImageWithURL(url);
+    }
+
     if (!deleteFromFirebaseIsSuccessful) {
-      this.messageService.add({
-        severity: 'error',
-        summary: 'Server Error',
-        detail: 'Could not delete on our server',
-      });
+      this.toastService.showError('Error', 'Could not delete on our server');
       return;
     }
 
+    //Update the UI so we don't reload the component and pull from server
     for (let i = 0; i < this.organizationPosts.length; i++) {
       if (
         JSON.stringify(this.organizationPosts[i].images) ===
@@ -227,6 +196,8 @@ export class UserDashboardComponent {
         return;
       }
     }
+
+    this.numOfActivePosts -= 1;
 
     console.error(
       "Couldn't find post we wanted to delete in the organization posts array. Weird",

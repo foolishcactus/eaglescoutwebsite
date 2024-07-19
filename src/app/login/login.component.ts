@@ -15,9 +15,8 @@ import { CarouselModule } from 'primeng/carousel';
 import { IconFieldModule } from 'primeng/iconfield';
 import { InputIconModule } from 'primeng/inputicon';
 import { InputTextModule } from 'primeng/inputtext';
-import { ToastModule } from 'primeng/toast';
-import { MessagesModule } from 'primeng/messages';
-import { MessageService } from 'primeng/api';
+
+import { ToastService } from '../toast.service';
 
 import { FirebaseService } from '../firebase.service';
 
@@ -28,8 +27,6 @@ import { FirebaseService } from '../firebase.service';
     CommonModule,
     ReactiveFormsModule,
     IconFieldModule,
-    ToastModule,
-    MessagesModule,
     InputIconModule,
     InputTextModule,
     ButtonModule,
@@ -37,7 +34,7 @@ import { FirebaseService } from '../firebase.service';
     InputGroupModule,
     CarouselModule,
   ],
-  providers: [MessageService],
+  providers: [],
   templateUrl: './login.component.html',
   styleUrl: './login.component.css',
 })
@@ -48,7 +45,7 @@ export class LoginComponent {
     private fb: FormBuilder,
     private fireBaseService: FirebaseService,
     private router: Router,
-    private messageService: MessageService,
+    private toastService: ToastService,
   ) {
     this.emailForm = this.fb.group({
       email: ['', [Validators.required, Validators.email]],
@@ -72,11 +69,7 @@ export class LoginComponent {
           console.error('Login error: ' + error);
 
           //Present Error Toast
-          this.messageService.add({
-            severity: 'error',
-            summary: 'Login Failed',
-            detail: 'Try Again',
-          });
+          this.toastService.showError('Login Failed', 'Try Again');
         });
     } else {
       console.log('Invalid Form');

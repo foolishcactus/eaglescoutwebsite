@@ -13,9 +13,6 @@ import { IconFieldModule } from 'primeng/iconfield';
 import { InputIconModule } from 'primeng/inputicon';
 import { InputTextModule } from 'primeng/inputtext';
 import { ButtonModule } from 'primeng/button';
-import { ToastModule } from 'primeng/toast';
-import { MessagesModule } from 'primeng/messages';
-import { MessageService } from 'primeng/api';
 import { DropdownModule } from 'primeng/dropdown';
 import { InputMaskModule } from 'primeng/inputmask';
 
@@ -29,8 +26,6 @@ import { Organization } from '../organization';
     CommonModule,
     RouterModule,
     ReactiveFormsModule,
-    ToastModule,
-    MessagesModule,
     ButtonModule,
     IconFieldModule,
     InputMaskModule,
@@ -39,7 +34,7 @@ import { Organization } from '../organization';
     InputTextareaModule,
     DropdownModule,
   ],
-  providers: [MessageService],
+  providers: [],
   templateUrl: './apply.component.html',
   styleUrl: './apply.component.css',
 })
@@ -101,7 +96,6 @@ export class ApplyComponent {
   constructor(
     private fb: FormBuilder,
     private fireBaseService: FirebaseService,
-    private messageService: MessageService,
   ) {
     console.log(this.states.length);
     this.applyForm = this.fb.group({
