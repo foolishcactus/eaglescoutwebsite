@@ -7,11 +7,11 @@ import { initializeApp, FirebaseApp } from 'firebase/app';
 import { getAuth, signInWithEmailAndPassword, User, signOut, onAuthStateChanged } from 'firebase/auth';
 import { httpsCallable, getFunctions } from 'firebase/functions';
 import { getStorage, ref, uploadBytesResumable, getDownloadURL } from 'firebase/storage';
-import { doc, getFirestore, DocumentReference} from 'firebase/firestore';
 
 import { Organization } from './organization';
 import { Post } from './post';
 import firebaseConfig from '../app/firebase-config.json';
+import { FunctionReturnPacket } from './function-return-packet';
 
 @Injectable({
   providedIn: 'root'
@@ -25,7 +25,6 @@ export class FirebaseService {
   private auth = getAuth(this.app);
   private functions = getFunctions();
   private storage = getStorage(this.app);
-  private firestore = getFirestore(this.app);
 
   // BehaviorSubject to hold and emit the current user state
   private currentUserSubject: BehaviorSubject<User | null> = new BehaviorSubject<User | null>(null);
@@ -63,32 +62,48 @@ export class FirebaseService {
 
  //DATBASE FUNCTIONS
   async addOrganization(organization: Organization): Promise<any> {
-    console.log(JSON.stringify(organization));
     const addOrganizationFn = httpsCallable(this.functions, 'addOrganization');
-    return from(addOrganizationFn(organization));
+    
+    //the return value is either true if successful or false if unsuccessful
+    const returnVal = await addOrganizationFn(organization);
+    const functionReturnPacket: FunctionReturnPacket = returnVal.data as FunctionReturnPacket;
+    
+   
+    console.log(functionReturnPacket.message);
+    return functionReturnPacket.wasSuccess
+    
   }
 
   async createPost(post: Post, email: string){
     const postWithEmail = { ...post, email };
-    console.log("This is the post that is passed into the service." + JSON.stringify(postWithEmail));
+
     const createPostFn = httpsCallable(this.functions, 'createPost');
-    await createPostFn(post);
-    return;
+    const returnVal = await createPostFn(postWithEmail);
+
+    const functionReturnPacket: FunctionReturnPacket = returnVal.data as FunctionReturnPacket;
+    console.log(functionReturnPacket.message);
+    return functionReturnPacket;
+  }
+
+  async deletePost(post: Post){
+    const deletePostFn = httpsCallable(this.functions, 'deletePost');
+    const returnVal = await deletePostFn(post);
+
+    const functionReturnPacket: FunctionReturnPacket = returnVal.data as FunctionReturnPacket;
+    console.log(functionReturnPacket.message);
+    return functionReturnPacket.wasSuccess;
   }
 
 
   async getOrganizationByEmail(data: any): Promise<any>{
     const getOrganizationByEmailFn = httpsCallable(this.functions, 'getOrganizationByEmail');
+    const returnVal = await getOrganizationByEmailFn(data);
+    // Use type assertion to specify the type of response.data
+    const functionReturnPacket: FunctionReturnPacket = returnVal.data as FunctionReturnPacket;
+
+    console.log(functionReturnPacket.message)
+    return functionReturnPacket.data;
     
-    try {
-      const response = await getOrganizationByEmailFn(data);
-      // Use type assertion to specify the type of response.data
-      const returnObj = response.data as Organization;
-      return returnObj;
-    } catch (error) {
-      console.error("Error fetching organization by email:", error);
-      throw error;
-    }
   }
 
   //This is the only function that access the firebase storage directly
@@ -127,18 +142,32 @@ export class FirebaseService {
   async getFilteredPosts(filters: any): Promise<[]>{
     const getFilteredPostsFn = httpsCallable(this.functions, 'getFilteredPosts');
     let returnVal = await getFilteredPostsFn(filters);
-   console.log("This is the return value in the firebase function" + JSON.stringify(returnVal.data));
-    return returnVal.data as [];
+    
+    let functionReturnPacket: FunctionReturnPacket = returnVal.data as FunctionReturnPacket;
+    console.log(functionReturnPacket.message);
+    return functionReturnPacket.data as [];
   }
 
   async getAllPosts(): Promise<[]>{
     const getAllPostsFn = httpsCallable(this.functions, 'getAllPosts');
-    let returnVal = await getAllPostsFn();
-    return returnVal.data as [];
+  let returnVal = await getAllPostsFn();
+  
+  let functionReturnPacket: FunctionReturnPacket = returnVal.data as FunctionReturnPacket;
+
+  if (functionReturnPacket.wasSuccess) {
+    console.log(functionReturnPacket.message);
+    return functionReturnPacket.data as [];
+  } else {
+    throw new Error(functionReturnPacket.message);
+  }
   }
 
-  createOrganizationRef(organizationEmail: string): DocumentReference<any>{
-    return doc(this.firestore, 'organizations/' + organizationEmail);
+  async getPostsFromOrganization(data: any){
+    const getPostsFromOrganizationFn = httpsCallable(this.functions, 'getPostsFromOrganization');
+    let returnVal = await getPostsFromOrganizationFn(data);
+    let functionReturnPacket: FunctionReturnPacket = returnVal.data as FunctionReturnPacket;
+    console.log(functionReturnPacket.message)
+    return functionReturnPacket.data as [];
   }
  
 }

@@ -6,10 +6,6 @@ import { logger } from "firebase-functions";
 import {getFirestore, FieldValue } from "firebase-admin/firestore";
 import {onCall} from "firebase-functions/v2/https";
 
-
-//import {Organization} from "../../src/app/organization";
-//import {Post} from "../../src/app/post";
-
 // Initialize Firebase Admin SDK
 
 
@@ -53,7 +49,10 @@ export const getAllPosts = onCall(async (request) => {
     }
 
     logger.log("This is the all posts with organizations: " + JSON.stringify(allPosts));
-    return allPosts;
+    let returnObj =  {wasSuccess: true, message: "We successfully got all posts.", data: allPosts};
+    logger.log("This is the returnObj that we are sending out of the cloud function ")
+    logger.log(returnObj)
+    return returnObj;
 
   } catch (error: any) {
     logger.log("We ran into an error when getting all posts in the cloud function: " + JSON.stringify(error));
@@ -123,17 +122,24 @@ export const getFilteredPosts = onCall(async (request) => {
     }
 
     logger.log("This is the filtered posts" + JSON.stringify(filteredPosts));
-    return  filteredPosts;
+    return {wasSuccess: true, message: "Successfully filtered posts.", data: filteredPosts as []};
 
   } catch (error:any) {
     logger.log("We ran into an error when getting filtered posts in the cloud function: " + JSON.stringify(error));
-    return error.message;
+    return {wasSuccess: false, message: "Error when trying to filter posts"};
   }
 });
 
 export const addOrganization = onCall(async (request) =>{
   try{
   //request.data is equal to the Organization object we are passing
+
+  //Check to see a document associated with this organization exists already
+  let doc = await db.collection('organizations').doc(request.data.email).get()
+    if (doc.exists){
+      return {wasSuccess: false, message: "There is an email already associated with this account."}
+    }
+
   const organization = {
     name: request.data.name,
     street: request.data.street,
@@ -149,8 +155,10 @@ export const addOrganization = onCall(async (request) =>{
  
     await db.collection("organizations").doc(request.data.email).set(organization);
     logger.log("Organization added.")
+    return {wasSuccess: true, message: "Form Successfully Submitted"};
   } catch(error){
     logger.log("We ran into an error when adding organization in the cloud function: " + JSON.stringify(error));
+    return {wasSuccess: false, message: "There was an error submitting your form."};
   }
   
 });
@@ -173,10 +181,10 @@ export const getOrganizationByEmail = onCall(async (request) => {
     logger.log("No document existis");
   } 
   logger.log("This is the doc.data" + JSON.stringify(doc.data()));
-  return doc.data();
+  return {wasSuccess: true, message: "Successfully found an organization with email.", data: doc.data()};
   }catch (error: any){
     logger.log("We ran into an error when adding organization in the cloud function: " + JSON.stringify(error));
-    return;
+    return {wasSuccess: false, message: "Couldn't find organization with email."};
   }
 });
 
@@ -197,6 +205,12 @@ export const createPost = onCall(async (request) => {
     throw new Error("Organization data was undefined")
   }
 
+  //Checking if the post snapshot query is not empty. If it is not empty then there is another document with that title
+  const postCheck = await db.collection('posts').where('title', '==', request.data.title).get();
+  if(!postCheck.empty){
+    return {wasSuccess: false, message: "Post with this title already exists."};
+  }
+
   const post = {
       title: request.data.title,
       description: request.data.description,
@@ -208,11 +222,57 @@ export const createPost = onCall(async (request) => {
       long: organizationData.long,
     };
     await db.collection('posts').add(post);
-    return "Success";
+    return {wasSuccess: true, message: "Post successfully created"};
   }catch (error: any){
-    logger.log("We ran into an error when adding organization in the cloud function: " + JSON.stringify(error));
-    return error.message;
+    logger.log("We ran into an error when creating a post in the cloud function: " + JSON.stringify(error));
+    return {wasSuccess: false, message: "Unknown error couldn't add your post."};
   }
   
 });
+
+export const deletePost = onCall (async (request) =>{
+  try{
+    const postsRef = db.collection('posts');
+    const querySnapshot = await postsRef.where('title', '==', request.data.title).get();
+
+    if (querySnapshot.empty) {
+      return { wasSuccess: false, message: 'No matching documents found.' };
+    }
+
+    const doc = querySnapshot.docs[0];
+    await doc.ref.delete();
+
+    return { wasSuccess: true, message: 'Document successfully deleted.' };
+
+  }catch(e){
+    logger.log("We ran into an error when trying to delete a post in cloud functions: " + JSON.stringify(e));
+    return {wasSuccess: false, message: "Failed to delete post."}
+  }
+})
+
+export const getPostsFromOrganization = onCall (async (request) =>{
+  try{
+    const orgRef = db.collection('organizations').doc(request.data.email);
+    const orgDoc = await orgRef.get(); 
+
+    const postsQuery = db.collection('posts').where('organizationRef', '==', orgRef);
+    const snapshot = await postsQuery.get();
+
+    const posts: any[] = [];
+
+    snapshot.forEach((doc) =>{
+      posts.push({
+        ...doc.data(),
+        organizationRef: null, 
+        organization: orgDoc.data(),
+      })
+    })
+
+    logger.log("This is the posts from the organization in the cloud function" + JSON.stringify(posts));
+    return {wasSuccess: true, message: "Found posts from organization.", data: posts as []};
+  }catch(e:any){
+    logger.log("We ran into an error when getting all posts from an Organization");
+    return {wasSuccess: false, message: "Couldn't find posts from organization"};
+  }
+})
 

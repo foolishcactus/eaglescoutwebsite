@@ -17,6 +17,7 @@ import { ToastModule } from 'primeng/toast';
 import { MessagesModule } from 'primeng/messages';
 import { MessageService } from 'primeng/api';
 import { Post } from '../post';
+import { FunctionReturnPacket } from '../function-return-packet';
 
 
 @Component({
@@ -143,7 +144,19 @@ export class PostcreatorComponent {
         createdAt: new Date(),
       };
 
-    await this.firebaseService.createPost(post, currentUserEmail);
+    let returnVal: FunctionReturnPacket = await this.firebaseService.createPost(post, currentUserEmail);
+
+    if (returnVal.wasSuccess){
+      this.messageService.add({
+        severity:'success',
+        summary: returnVal.message,
+      });
+    }else{
+      this.messageService.add({
+        severity:'success',
+        summary: returnVal.message,
+      });
+    }
      
     this.postForm.reset();
     this.images = [];

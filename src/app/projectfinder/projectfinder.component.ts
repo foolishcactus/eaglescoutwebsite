@@ -71,9 +71,8 @@ export class ProjectfinderComponent {
       tempPosts = this.transformPostImages(tempPosts);
       for (i = 0; i < tempPosts.length; i++){
         //Add groups of 3 posts to this.posts
-        if (i % 3 == 0 && i != 0){
+        if (i % 2 == 0 && i != 0){
           this.posts.push(tempContainer);
-          console.log("This is the tempContainer which is going to be a row." + JSON.stringify(tempContainer));
           tempContainer = [];
         }
         tempContainer.push(tempPosts[i]);
@@ -81,11 +80,8 @@ export class ProjectfinderComponent {
 
       // Add any remaining items in tempContainer to this.posts
       if (tempContainer.length > 0){
-        console.log("We have these things remaining in tempContainer" + JSON.stringify(tempContainer));
         this.posts.push(tempContainer);
       }
-      console.log("This is the value of posts by the end");
-      console.log(JSON.stringify(this.posts));
     } catch (error) {
       console.log("Error getting posts" + error);
     }
@@ -119,9 +115,7 @@ export class ProjectfinderComponent {
 
   //Transforming Images array into an array of objects that have a property of urlProperty with the originial string to fit the constraints of PRIME NG galleria template
   transformPostImages(posts: any[]): any[] {
-    console.log("We are in the transform function");
     posts.forEach(post => {
-      console.log("In the forEach loop");
       if (post.images && post.images.length > 0) {
         post.images = post.images.map((url: string) => ({ urlProperty: url }));
       } else {
