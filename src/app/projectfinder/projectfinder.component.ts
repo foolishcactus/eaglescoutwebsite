@@ -45,8 +45,11 @@ import { GeocodingService } from '../geocoding.service';
   styleUrl: './projectfinder.component.css',
 })
 export class ProjectfinderComponent {
-  posts: Post[][] = [];
-  value: number = 50;
+  posts: any[][] = [];
+  loading: boolean = false;
+  limit: number = 6;
+  lastVisible: string | null = null;
+  isOnInit: boolean = true;
 
   categories = [
     { name: 'Construction' },

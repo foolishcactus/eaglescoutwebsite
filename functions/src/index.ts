@@ -14,6 +14,115 @@ const db = getFirestore();
 //{ cors: 'http://localhost:4200' }
 
 //READ FUNCTIONS
+exports.getPostsWithPagination = onCall(async (request) => {
+  try {
+    const { limit, startAfter, filterCriteria } = request.data;
+    const postsRef = db.collection('posts');
+
+    logger.log('We are now beginning the query to get paginated posts');
+
+    let query = postsRef.orderBy('createdAt').limit(limit);
+
+    // Apply pagination
+    if (startAfter) {
+      const startAfterDoc = await db.collection('posts').doc(startAfter).get();
+      query = query.startAfter(startAfterDoc);
+    }
+
+    // Apply location filtering
+    if (
+      filterCriteria &&
+      filterCriteria.lat &&
+      filterCriteria.long &&
+      filterCriteria.radius
+    ) {
+      const latShift = filterCriteria.radius / 69.0;
+      const longShift =
+        filterCriteria.radius /
+        (69.0 * Math.cos((filterCriteria.lat * Math.PI) / 180));
+      const latMin = filterCriteria.lat - latShift;
+      const latMax = filterCriteria.lat + latShift;
+      const longMin = filterCriteria.long - longShift;
+      const longMax = filterCriteria.long + longShift;
+
+      query = query
+        .where('lat', '>=', latMin)
+        .where('lat', '<=', latMax)
+        .where('long', '>=', longMin)
+        .where('long', '<=', longMax);
+    }
+
+    // Apply category filtering
+    if (
+      filterCriteria &&
+      filterCriteria.category &&
+      filterCriteria.category.length > 0
+    ) {
+      const categoryNames = filterCriteria.category.map(
+        (category: any) => category.name,
+      );
+      query = query.where('category', 'in', categoryNames);
+    }
+
+    // Execute the query
+    const snapshot = await query.get();
+
+    logger.log(
+      'This is the snapshot from the query ' + JSON.stringify(snapshot),
+    );
+    logger.log('Also the unstringified version: ' + snapshot);
+
+    const paginatedPosts: any[] = [];
+
+    // Process each document in the snapshot
+    for (const doc of snapshot.docs) {
+      const postData = doc.data();
+      const organizationRef = postData.organizationRef;
+
+      // Fetch the organization data using the reference
+      const organizationDoc = await organizationRef.get();
+      const organizationData = organizationDoc.data();
+
+      // Add the organization data to the post
+      paginatedPosts.push({
+        id: doc.id,
+        ...postData,
+        organizationRef: null,
+        organization: organizationData,
+      });
+    }
+
+    logger.log(
+      'This is the paginated posts with organizations: ' +
+        JSON.stringify(paginatedPosts),
+    );
+    let returnObj = {
+      wasSuccess: true,
+      message: 'We successfully got the paginated posts.',
+      data: paginatedPosts,
+    };
+    logger.log(
+      'This is the returnObj that we are sending out of the cloud function ',
+    );
+    logger.log(returnObj);
+    return {
+      wasSuccess: true,
+      message: 'Successfully got paginated posts.',
+      data: returnObj,
+    };
+  } catch (error: any) {
+    logger.log(
+      'We ran into an error when getting paginated posts in the cloud function: ' +
+        JSON.stringify(error),
+    );
+    return {
+      wasSuccess: false,
+      message: 'Error when trying to get paginated posts',
+      error: error.message,
+    };
+  }
+});
+
 export const getAllPosts = onCall(async (request) => {
   try {
     const postsRef = db.collection('posts');

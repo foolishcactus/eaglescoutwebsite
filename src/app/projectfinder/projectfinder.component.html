@@ -113,17 +113,45 @@
     </p-card>
   </div>
 
-  <h2>Posts</h2>
+  <div class="postsParent">
+    <h2>Posts</h2>
 
-  <div
-    style="
-      width: 95vw;
-      display: flex;
-      flex-direction: row;
-      justify-content: space-between;
-    "
-  >
-    <div class="postContainer" style="width: 85%; margin: 0 auto">
+    <div class="postsVirtualScrollContainer">
+      <div *ngIf="loading" class="loading-item">Loading...</div>
+    </div>
+
+    <form [formGroup]="filterForm" class="filterContainer">
+      <p-multiSelect
+        [options]="categories"
+        formControlName="category"
+        optionLabel="name"
+        placeholder="Select Categories"
+      />
+
+      <p-inputMask
+        mask="99999"
+        formControlName="zipcode"
+        placeholder="Zip Code"
+      />
+
+      <p style="font-size: 1.2rem">Radius: {{ radius }} Miles</p>
+      <p-slider
+        formControlName="radius"
+        [min]="5"
+        [max]="50"
+        class="w-full"
+        [step]="5"
+      ></p-slider>
+
+      <div style="width: 100%; display: flex; justify-content: space-evenly">
+        <p-button pRipple label="Submit" (click)="loadPosts()" />
+        <p-button pRipple label="Reset" (click)="onResetFilter()" />
+      </div>
+    </form>
+  </div>
+
+  <div class="posts">
+    <div class="postContainer" style="width: 100%; margin: 0 auto">
       <div
         *ngFor="let postRow of posts"
         style="display: flex; justify-content: space-evenly; width: 100%"
@@ -189,33 +217,5 @@
         <div></div>
       </div>
     </div>
-    <form [formGroup]="filterForm" class="filterContainer">
-      <p-multiSelect
-        [options]="categories"
-        formControlName="category"
-        optionLabel="name"
-        placeholder="Select Categories"
-      />
-
-      <p-inputMask
-        mask="99999"
-        formControlName="zipcode"
-        placeholder="Zip Code"
-      />
-
-      <p style="font-size: 1.2rem">Radius: {{ radius }} Miles</p>
-      <p-slider
-        formControlName="radius"
-        [min]="5"
-        [max]="50"
-        class="w-full"
-        [step]="5"
-      ></p-slider>
-
-      <div style="width: 100%; display: flex; justify-content: space-evenly">
-        <p-button pRipple label="Submit" (click)="loadPosts()" />
-        <p-button pRipple label="Reset" (click)="onResetFilter()" />
-      </div>
-    </form>
   </div>
 </div>

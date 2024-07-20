@@ -238,6 +238,32 @@ export class FirebaseService {
   }
 
   //Cloud FireStore Read Functions
+
+  async getPostsWithPagination(
+    limit: number,
+    startAfter?: string,
+    filterCriteria?: any,
+  ) {
+    const getPostsWithPagination = httpsCallable(
+      this.functions,
+      'getPostsWithPagination',
+    );
+    const dataPacket = {
+      limit: limit,
+      startAfter: startAfter,
+      filterCriteria: filterCriteria,
+    };
+    const returnVal = await getPostsWithPagination(dataPacket);
+    const functionReturnPacket: FunctionReturnPacket =
+      returnVal.data as FunctionReturnPacket;
+    console.log(functionReturnPacket.message);
+    console.log(
+      'This is the value of the data we received from firebase ' +
+        JSON.stringify(functionReturnPacket.data),
+    );
+    return functionReturnPacket.data;
+  }
+
   async getOrganizationByEmail(data: any): Promise<any> {
     const getOrganizationByEmailFn = httpsCallable(
       this.functions,

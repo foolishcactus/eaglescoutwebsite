@@ -207,3 +207,21 @@
 :host ::ng-deep .p-button {
   width: 5vw;
 }
+
+.posts {
+  width: 100vw;
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  background-color: #fefefe;
+  padding: 10rem;
+}
+
+.posts h2 {
+  font-size: 4.8rem;
+}
+
+.postContainer {
+  width: 100%;
+  margin: 0 auto;
+}
