@@ -1,6 +1,128 @@
 <div class="landing-container">
   <div class="landing-content">
-    <h1>Your Journey Starts Here</h1>
-    <button class="btn">Begin</button>
+    <h1>Eagle Scout Project Match</h1>
+    <h3>
+      Connecting Eagle Scouts with meaningful projects from reputable
+      organizations, helping Scouts achieve their ranks while organizations
+      benefit from dedicated support.
+    </h3>
   </div>
 </div>
+
+<div class="for-scouts-container">
+  <div class="imgContainer">
+    <img style="width: 100%" src="../../assets/images/throughthepark.png" />
+  </div>
+  <div class="spacer"></div>
+  <div class="content">
+    <h2 class="forHeader">For Scouts</h2>
+    <div class="problem">
+      <p class="forText">
+        Are you finding it difficult to locate suitable projects to achieve your
+        Eagle Scout rank? Facing difficulties in connecting with organizations
+        that have meaningful projects available?
+      </p>
+    </div>
+    <div class="solution">
+      <p class="forText">
+        Our platform simplifies your search for Eagle Scout projects. With a
+        wide range of projects from reputable organizations, you can easily find
+        opportunities that match your interests and skills. Our streamlined
+        application process allows you to apply for projects and receive
+        approvals quickly. Plus, we provide resources and support to help you
+        successfully complete your projects and fulfill your Eagle Scout
+        requirements. Use our website to focus on making a meaningful impact and
+        reaching your scouting goals.
+      </p>
+    </div>
+  </div>
+</div>
+
+<div class="for-organizations-container">
+  <div class="content">
+    <h1 class="forHeader">For Organizations</h1>
+
+    <div class="problem">
+      <p class="forText">
+        Struggling to find reliable volunteers for your important projects?
+        Limited outreach and resource constraints to attract dedicated
+        individuals who can help achieve your goals? Difficulty Managing and
+        coordinating volunteer efforts?
+      </p>
+    </div>
+
+    <div class="solution">
+      <p class="forText">
+        Our platform connects you with motivated Eagle Scouts eager to take on
+        meaningful projects. By posting your projects on our site, you gain
+        access to a pool of dedicated scouts committed to making a positive
+        impact. Our user-friendly interface makes it easy to post, manage, and
+        track projects, ensuring a streamlined process. With our platform, you
+        can overcome volunteer shortages and focus on fulfilling your mission
+        with the support of enthusiastic and capable scouts.
+      </p>
+    </div>
+  </div>
+  <div class="spacer"></div>
+  <div class="imgContainer">
+    <img style="width: 100%" src="../../assets/images/construction (2).png" />
+  </div>
+</div>
+
+<h1 style="font-size: 5.6rem; margin-bottom: 5vh; text-align: center">
+  Getting Started
+</h1>
+<div class="startContainer">
+  <div class="scouts">
+    <h1 class="startHeader">Scouts</h1>
+    <p class="startText">
+      Getting started with our platform is simple and hassle-free. You don't
+      need to create an account or provide any personal information. We respect
+      your privacy and do not collect any data. All you need to do is browse
+      through the list of available projects and find one that interests you.
+      Each project listing includes contact information for the organization,
+      allowing you to reach out directly. All communication and arrangements are
+      handled externally, between you and the organization. We provide you with
+      the contact details, and the rest is up to you.
+    </p>
+
+    <p-button
+      [style]="{
+        width: '20vw',
+        padding: '1rem',
+        borderRadius: '1rem',
+        fontSize: '1.6rem',
+        marginTop: '3vh',
+      }"
+      label="Find Projects Now"
+      (click)="findProjectsClick()"
+    />
+  </div>
+  <div class="organizations">
+    <h1 class="startHeader">Organizations</h1>
+    <p class="startText">
+      To start using our platform, you'll need to apply to create an account. We
+      keep the application process straightforward by only asking for your
+      organization's name, address, and a contact email. Once you submit your
+      application, our team will manually verify the details to ensure
+      legitimacy. Upon approval, you will receive an email confirming your
+      account and providing login details. After logging in, you can begin
+      posting your projects right away. This process ensures that only reputable
+      organizations are part of our community, providing a trustworthy
+      environment for Eagle Scouts to find meaningful projects.
+    </p>
+    <p-button
+      [style]="{
+        width: '20vw',
+        padding: '1rem',
+        borderRadius: '1rem',
+        fontSize: '1.6rem',
+        marginTop: '3vh',
+      }"
+      [label]="buttonLabel"
+      (click)="applyOrDashboardClick()"
+    ></p-button>
+  </div>
+</div>
+
+<div class="footer"></div>

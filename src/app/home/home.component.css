@@ -1,7 +1,8 @@
+/* Base styles */
 .landing-container {
   position: relative;
   width: 100vw;
-  height: 92vh;
+  height: 80vh;
   overflow: hidden;
 }
 
@@ -38,12 +39,23 @@
   transform: translateY(-50%);
   color: white;
   text-align: left;
+  width: 35vw;
+  background-color: #003366;
+  padding: 5rem;
+  border-radius: 2rem;
 }
 
 /* Style the heading */
 .landing-content h1 {
   font-size: 4.8rem;
   margin: 0;
+  font-family: "Roboto", sans-serif;
+}
+
+.landing-content h3 {
+  font-size: 1.6rem;
+  margin: 0;
+  margin-top: 2rem;
   font-family: "Roboto", sans-serif;
 }
 
@@ -64,4 +76,246 @@
 
 .landing-content .btn:hover {
   background-color: #002941;
+}
+
+.for-organizations-container,
+.for-scouts-container {
+  width: 100vw;
+  height: 70vh;
+  padding: 10rem 20rem;
+  display: flex;
+  align-items: center;
+}
+
+.for-organizations-container {
+  background-color: #f0f0f0;
+}
+
+.for-scouts-container {
+  background-color: #fefefe;
+}
+
+.forHeader {
+  font-size: 5.2rem;
+  margin-top: 0;
+}
+
+.content {
+  flex: 2;
+}
+
+.spacer {
+  flex: 0.5;
+}
+
+.imgContainer {
+  flex: 2;
+}
+
+.forText {
+  font-size: 1.8rem;
+}
+
+.startContainer {
+  width: 100vw;
+  height: 70vh;
+  display: flex;
+}
+
+.scouts,
+.organizations {
+  flex: 1;
+  padding: 3rem 20rem;
+}
+
+.scouts {
+  background-color: #003366;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+.organizations {
+  background-color: #004080;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+.startHeader {
+  font-size: 3.6rem;
+  color: white;
+  text-align: center;
+}
+
+.startText {
+  font-size: 1.8rem;
+  color: white;
+  text-align: center;
+}
+
+.footer {
+  height: 40vh;
+  width: 100vw;
+  background-color: #f0f0f0;
+}
+
+.getStartedContainer {
+  height: 100vh;
+  width: 100vw;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+
+/* Responsive design */
+@media (max-width: 1024px) {
+  .landing-content {
+    width: 50vw;
+    padding: 4rem;
+  }
+
+  .landing-content h1 {
+    font-size: 3.6rem;
+  }
+
+  .landing-content h3 {
+    font-size: 1.4rem;
+  }
+
+  .landing-content .btn {
+    padding: 0.8rem 1.6rem;
+    font-size: 1.6rem;
+  }
+
+  .for-organizations-container,
+  .for-scouts-container {
+    padding: 5rem 10rem;
+  }
+
+  .forHeader {
+    font-size: 4rem;
+  }
+
+  .forText {
+    font-size: 1.6rem;
+  }
+
+  .scouts,
+  .organizations {
+    padding: 2rem 10rem;
+  }
+
+  .startHeader {
+    font-size: 3rem;
+  }
+
+  .startText {
+    font-size: 1.6rem;
+  }
+}
+
+@media (max-width: 768px) {
+  .landing-content {
+    width: 70vw;
+    padding: 3rem;
+  }
+
+  .landing-content h1 {
+    font-size: 2.8rem;
+  }
+
+  .landing-content h3 {
+    font-size: 1.2rem;
+  }
+
+  .landing-content .btn {
+    padding: 0.6rem 1.2rem;
+    font-size: 1.4rem;
+  }
+
+  .for-organizations-container,
+  .for-scouts-container {
+    padding: 4rem 5rem;
+    flex-direction: column;
+  }
+
+  .forHeader {
+    font-size: 3.6rem;
+  }
+
+  .forText {
+    font-size: 1.4rem;
+  }
+
+  .content,
+  .imgContainer {
+    flex: 1;
+  }
+
+  .spacer {
+    display: none;
+  }
+
+  .scouts,
+  .organizations {
+    padding: 2rem 5rem;
+  }
+
+  .startHeader {
+    font-size: 2.4rem;
+  }
+
+  .startText {
+    font-size: 1.4rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .landing-content {
+    width: 90vw;
+    padding: 2rem;
+  }
+
+  .landing-content h1 {
+    font-size: 2rem;
+  }
+
+  .landing-content h3 {
+    font-size: 1rem;
+  }
+
+  .landing-content .btn {
+    padding: 0.5rem 1rem;
+    font-size: 1.2rem;
+  }
+
+  .for-organizations-container,
+  .for-scouts-container {
+    padding: 2rem 3rem;
+  }
+
+  .forHeader {
+    font-size: 3rem;
+  }
+
+  .forText {
+    font-size: 1.2rem;
+  }
+
+  .scouts,
+  .organizations {
+    padding: 1rem 3rem;
+  }
+
+  .startHeader {
+    font-size: 2rem;
+  }
+
+  .startText {
+    font-size: 1.2rem;
+  }
 }

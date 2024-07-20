@@ -3,7 +3,6 @@ import { CommonModule } from '@angular/common';
 import { DialogService, DynamicDialogRef } from 'primeng/dynamicdialog';
 import { FirebaseService } from '../firebase.service';
 import { PostcreatorComponent } from '../postcreator/postcreator.component';
-import { Organization } from '../organization';
 import { User } from 'firebase/auth';
 import { ButtonModule } from 'primeng/button';
 import { ChipModule } from 'primeng/chip';
@@ -198,6 +197,10 @@ export class UserDashboardComponent {
     }
 
     this.numOfActivePosts -= 1;
+    console.log(
+      'This is the numOfActive Posts now after deleting' +
+        this.numOfActivePosts,
+    );
 
     console.error(
       "Couldn't find post we wanted to delete in the organization posts array. Weird",
