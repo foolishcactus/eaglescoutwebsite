@@ -23,12 +23,6 @@ exports.getPostsWithPagination = onCall(async (request) => {
 
     let query = postsRef.orderBy('createdAt').limit(limit);
 
-    // Apply pagination
-    if (startAfter) {
-      const startAfterDoc = await db.collection('posts').doc(startAfter).get();
-      query = query.startAfter(startAfterDoc);
-    }
-
     // Apply location filtering
     if (
       filterCriteria &&
@@ -45,6 +39,10 @@ exports.getPostsWithPagination = onCall(async (request) => {
       const longMin = filterCriteria.long - longShift;
       const longMax = filterCriteria.long + longShift;
 
+      logger.log(
+        'In the filterCriteria lat and long we are now about to run the query.',
+      );
+
       query = query
         .where('lat', '>=', latMin)
         .where('lat', '<=', latMax)
@@ -52,17 +50,32 @@ exports.getPostsWithPagination = onCall(async (request) => {
         .where('long', '<=', longMax);
     }
 
-    // Apply category filtering
+    logger.log('We have made it past the Filter Latitude Check');
+
     if (
       filterCriteria &&
       filterCriteria.category &&
       filterCriteria.category.length > 0
     ) {
+      logger.log('We have category queries');
       const categoryNames = filterCriteria.category.map(
-        (category: any) => category.name,
+        (category: { name: string }) => category.name,
       );
+      logger.log('This is the categoryNames ' + JSON.stringify(categoryNames));
       query = query.where('category', 'in', categoryNames);
     }
+
+    logger.log('We have made it past the Filter Cateogry Check');
+
+    // Apply pagination
+    if (startAfter) {
+      const startAfterDoc = await db.collection('posts').doc(startAfter).get();
+      query = query.startAfter(startAfterDoc);
+    }
+
+    logger.log('We have made it past the startAfter Check');
+
+    // Apply category filtering
 
     // Execute the query
     const snapshot = await query.get();
@@ -117,7 +130,7 @@ exports.getPostsWithPagination = onCall(async (request) => {
     );
     return {
       wasSuccess: false,
-      message: 'Error when trying to get paginated posts',
+      message: 'Error when trying to get paginated posts in the cloud function',
       error: error.message,
     };
   }

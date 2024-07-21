@@ -2,6 +2,7 @@ import { Organization } from './organization';
 import { DocumentReference, FieldValue } from '@angular/fire/firestore';
 
 export interface Post {
+  id?: string;
   category: string;
   description: string;
   images: any[];

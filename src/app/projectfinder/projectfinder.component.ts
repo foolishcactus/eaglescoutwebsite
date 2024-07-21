@@ -1,10 +1,8 @@
-import { Component } from '@angular/core';
+import { Component, ViewChild } from '@angular/core';
 import { CommonModule } from '@angular/common';
 
 import { CardModule } from 'primeng/card';
-import { GalleriaModule } from 'primeng/galleria';
 import { ButtonModule } from 'primeng/button';
-import { ChipModule } from 'primeng/chip';
 import { SliderModule } from 'primeng/slider';
 import { InputTextModule } from 'primeng/inputtext';
 import { MultiSelectModule } from 'primeng/multiselect';
@@ -14,6 +12,12 @@ import { InputIconModule } from 'primeng/inputicon';
 
 import { FirebaseService } from '../firebase.service';
 import { Post } from '../post';
+import { PostComponent } from '../post/post.component';
+import { ChunkPipe } from '../chunk.pipe';
+import { ToastService } from '../toast.service';
+
+import { InfiniteScrollDirective } from 'ngx-infinite-scroll';
+
 import {
   FormGroup,
   ReactiveFormsModule,
@@ -34,22 +38,26 @@ import { GeocodingService } from '../geocoding.service';
     InputIconModule,
     InputMaskModule,
     FormsModule,
-    GalleriaModule,
     MultiSelectModule,
     InputTextModule,
     ButtonModule,
-    ChipModule,
     ReactiveFormsModule,
+    PostComponent,
+    InfiniteScrollDirective,
+    ChunkPipe,
   ],
   templateUrl: './projectfinder.component.html',
   styleUrl: './projectfinder.component.css',
 })
 export class ProjectfinderComponent {
-  posts: any[][] = [];
+  posts: Post[] = [];
   loading: boolean = false;
-  limit: number = 6;
-  lastVisible: string | null = null;
-  isOnInit: boolean = true;
+  limit: number = 4;
+  lastVisible: string | undefined = undefined;
+  filterCriteria: any = {};
+  filterForm: FormGroup;
+  filtersHaveBeenActivated: boolean = false;
+  numberOfTimeFilterSearch: number = 0;
 
   categories = [
     { name: 'Construction' },
@@ -59,93 +67,159 @@ export class ProjectfinderComponent {
     { name: 'Other' },
   ];
 
-  categoryData = {
-    Construction: { icon: 'construction', color: '#ef4957' },
-    Renovation: { icon: 'build', color: '#169b9a' },
-    Environmental: { icon: 'eco', color: '#a7c957' },
-    Landscaping: { icon: 'nature', color: '#f6be23' },
-    Other: { icon: 'miscellaneous_services', color: '#fa8739' },
-  };
-
-  filterForm: FormGroup;
-
   constructor(
     private firebaseService: FirebaseService,
     private fb: FormBuilder,
     private geocodingService: GeocodingService,
+    private toastService: ToastService,
   ) {
     this.filterForm = this.fb.group({
-      name: [''],
-      category: [''],
+      category: ['', [Validators.required]],
       zipcode: ['', [Validators.required, Validators.pattern('^[0-9]{5}$')]],
-      radius: [5],
+      radius: [5, [Validators.required]],
     });
   }
 
   ngOnInit() {
-    this.loadPosts(true);
+    this.loadPosts();
   }
 
-  async loadPosts(isOnInit?: boolean) {
-    this.posts = [];
-    let tempPosts: any[] = [];
-    let tempContainer: any[] = [];
-    let i = 0;
+  async loadPosts(withFilters?: boolean) {
+    let tempPosts: Post[] = [];
 
     try {
-      if (isOnInit) {
-        tempPosts = await this.firebaseService.getAllPosts();
+      if (this.filtersHaveBeenActivated || withFilters) {
+        console.log('THE FILTERS HAVE BEEN ACTIVATED');
+        let returnVal = await this.filterSearch();
+        tempPosts = returnVal.data;
       } else {
-        tempPosts = await this.filterSearch();
+        let returnVal = await this.firebaseService.getPostsWithPagination(
+          this.limit,
+          this.lastVisible,
+        );
+        tempPosts = returnVal.data;
       }
 
-      tempPosts = this.transformPostImages(tempPosts);
-      for (i = 0; i < tempPosts.length; i++) {
-        //Add groups of 3 posts to this.posts
-        if (i % 2 == 0 && i != 0) {
-          this.posts.push(tempContainer);
-          tempContainer = [];
-        }
-        tempContainer.push(tempPosts[i]);
+      console.log('This is the tempPosts value ' + JSON.stringify(tempPosts));
+
+      if (tempPosts.length > 0) {
+        const transformedPosts = this.transformPostImages(tempPosts);
+
+        // Add the new posts to the existing posts array
+        this.posts = [...this.posts, ...transformedPosts];
+
+        // Update lastVisible for pagination
+        this.lastVisible = transformedPosts[transformedPosts.length - 1].id;
       }
 
-      // Add any remaining items in tempContainer to this.posts
-      if (tempContainer.length > 0) {
-        this.posts.push(tempContainer);
-      }
+      console.log('This is the posts array: ' + JSON.stringify(this.posts));
     } catch (error) {
-      console.log('Error getting posts' + error);
+      console.log('Error getting posts: ' + error);
+    } finally {
+      console.log('This is the posts array: ' + JSON.stringify(this.posts));
     }
   }
 
-  getCategoryData(category: string) {
-    return (
-      this.categoryData[category as keyof typeof this.categoryData] ||
-      this.categoryData['Other']
-    );
-  }
-
-  async filterSearch(): Promise<any[]> {
+  async filterSearch() {
     if (!this.filterForm.valid) {
-      throw new Error("The filter form isn't valid");
+      if (this.filterForm.get('category')?.value === null) {
+        this.toastService.showWarn(
+          "Filter Isn't Valid",
+          'Please specify categories.',
+        );
+      } else if (this.filterForm.get('zipcode')?.value === null) {
+        this.toastService.showWarn(
+          "Filter Isn't Valid",
+          'Please specify zipcode.',
+        );
+      }
     }
 
-    let zipCodeString: string = this.filterForm
-      .get('zipcode')
-      ?.value.toString();
-    let response = await this.geocodingService.getCoordinates(zipCodeString);
-
-    const filtersObject = {
+    const newFilterCriteria = {
       name: this.filterForm.get('name')?.value,
       category: this.filterForm.get('category')?.value,
       zipcode: this.filterForm.get('zipcode')?.value,
       radius: this.filterForm.get('radius')?.value,
-      lat: response.results[0].geometry.location.lat || null,
-      long: response.results[0].geometry.location.lng || null,
+      lat: null,
+      long: null,
     };
 
-    console.log('this is the filters object' + JSON.stringify(filtersObject));
-    return await this.firebaseService.getFilteredPosts(filtersObject);
+    // Get the new lat/long values based on the zipcode
+    if (newFilterCriteria.zipcode) {
+      let response = await this.geocodingService.getCoordinates(
+        newFilterCriteria.zipcode,
+      );
+      newFilterCriteria.lat = response.results[0].geometry.location.lat || null;
+      newFilterCriteria.long =
+        response.results[0].geometry.location.lng || null;
+    }
+
+    // Compare new filter criteria with current filter criteria
+    if (
+      JSON.stringify(newFilterCriteria) !== JSON.stringify(this.filterCriteria)
+    ) {
+      // Filter criteria have changed, reset posts and pagination
+      this.posts = [];
+      this.lastVisible = undefined;
+      this.filterCriteria = newFilterCriteria;
+    }
+
+    this.filtersHaveBeenActivated = true;
+    this.numberOfTimeFilterSearch += 1;
+
+    console.log(
+      'this is the filters object' + JSON.stringify(this.filterCriteria),
+    );
+    return await this.firebaseService.getPostsWithPagination(
+      this.limit,
+      this.lastVisible,
+      this.filterCriteria,
+    );
+  }
+
+  async testPaginatedPosts() {
+    const filterCriteria = {
+      category: [{ name: 'Construction' }, { name: 'Environmental' }], // Example categories
+      zipcode: 32773,
+      radius: 30,
+      lat: 28.7406, // Example latitude
+      long: -81.274948, // Example longitude
+    };
+
+    try {
+      // Fetch the first set of posts with filter criteria
+      const firstSet = await this.firebaseService.getPostsWithPagination(
+        3,
+        undefined,
+        filterCriteria,
+      );
+      console.log('First set of filtered posts:', firstSet.data);
+
+      // Check if we have posts
+      console.log('we are about to test');
+      if (firstSet.data.length > 0) {
+        console.log(
+          'We are trying to get the second set of filtered posts now.',
+        );
+        // Use the ID of the last post from the first set as the startAfter parameter
+        const lastVisible = firstSet.data[firstSet.data.length - 1];
+        console.log('This is the last visible value:', lastVisible);
+        console.log('This is the last visible id:', lastVisible.id);
+
+        // Fetch the next set of posts using startAfter and filter criteria
+        const nextSet = await this.firebaseService.getPostsWithPagination(
+          3,
+          lastVisible.id,
+          filterCriteria,
+        );
+        console.log('Next set of filtered posts:', nextSet.data);
+      }
+    } catch (error) {
+      console.error(
+        'Error fetching paginated posts with filter criteria:',
+        error,
+      );
+    }
   }
 
   //Transforming Images array into an array of objects that have a property of urlProperty with the originial string to fit the constraints of PRIME NG galleria template

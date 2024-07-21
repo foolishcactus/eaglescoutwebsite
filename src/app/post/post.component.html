@@ -1,0 +1,52 @@
+<p-card
+  [style]="{
+    width: '25vw',
+    borderRadius: '3rem',
+    padding: '1rem',
+    marginBottom: '10vh',
+  }"
+>
+  <ng-template pTemplate="header">
+    <p-galleria
+      [value]="post.images"
+      [circular]="true"
+      [showItemNavigators]="true"
+      [showThumbnails]="false"
+      [containerStyle]="{}"
+    >
+      <ng-template pTemplate="item" let-item>
+        <img [src]="item.urlProperty" style="width: 100%; display: block" />
+      </ng-template>
+    </p-galleria>
+
+    <div style="display: flex; justify-content: space-between">
+      <p class="postHeader">{{ post.title }}</p>
+      <p-chip
+        [style]="{
+          backgroundColor: getCategoryData(post.category).color,
+        }"
+      >
+        <span class="material-icons">{{
+          getCategoryData(post.category).icon
+        }}</span>
+        <span style="margin-left: 0.5rem; margin-right: 0.5rem">{{
+          post.category
+        }}</span>
+      </p-chip>
+    </div>
+
+    <p class="orgNameAndAddress">
+      {{ post.organization?.name }} | {{ post.organization?.street }},
+      {{ post.organization?.city }}, {{ post.organization?.state }},
+      {{ post.organization?.zipcode }}
+    </p>
+  </ng-template>
+
+  <p class="description">
+    {{ post.description }}
+  </p>
+
+  <ng-template pTemplate="footer">
+    <p-button pRipple label="Learn More" />
+  </ng-template>
+</p-card>

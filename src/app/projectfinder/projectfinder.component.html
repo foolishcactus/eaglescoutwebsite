@@ -24,198 +24,140 @@
   </svg>
 </div>
 
-<div class="main-container">
-  <div class="first-banner">
-    <p-card
-      class="custom-card"
-      [style]="{
-        'min-height': '100%',
-        width: '25vw',
-        padding: '2rem',
-        borderRadius: '25px',
-      }"
-    >
-      <ng-template pTemplate="header">
-        <img
-          style="height: 35vh"
-          alt="Card"
-          src="../../assets/images/projectfindericons/search.png"
-        />
-        <h2 class="header-text" style="margin: 0; text-align: center">
-          What is the Project Finder?
-        </h2>
-      </ng-template>
-      <p class="body-text" style="margin: 0; text-align: center">
-        Here local organizations have posted projects that they have deemed
-        within the scope of an Eagle Project. The goal is to improve the
-        community by bridging the gap between non-profit organizations that need
-        resources and prospective Eagle Scouts who need to earn their ranks. A
-        win-win situation where both benefit.
-      </p>
-    </p-card>
-
-    <p-card
-      class="custom-card"
-      [style]="{
-        'min-height': '100%',
-        width: '25vw',
-        padding: '2rem',
-        borderRadius: '25px',
-      }"
-    >
-      <ng-template pTemplate="header">
-        <img
-          style="height: 35vh"
-          alt="Card"
-          src="../../assets/images/projectfindericons/communicate.png"
-        />
-        <h2 class="header-text" style="margin: 0; text-align: center">
-          As a Scout, How should I use this?
-        </h2>
-      </ng-template>
-      <p class="body-text" style="margin: 0; text-align: center">
-        This will simplify the process of picking your project. These are not
-        final projects, but simply a starting guide for a particular idea and
-        organization. Your next steps will be to reach out as the Scout and move
-        further along the process. All we have done here is make it easier
-        finding the organizations.
-      </p>
-    </p-card>
-
-    <p-card
-      class="custom-card"
-      [style]="{
-        'min-height': '100%',
-        width: '25vw',
-        padding: '2rem',
-        borderRadius: '25px',
-      }"
-    >
-      <ng-template pTemplate="header">
-        <img
-          style="height: 35vh"
-          alt="Card"
-          src="../../assets/images/projectfindericons/construction.png"
-        />
-        <h2 class="header-text" style="margin: 0; text-align: center">
-          As an Organization, How should I use this?
-        </h2>
-      </ng-template>
-      <p class="body-text" style="margin: 0; text-align: center">
-        If you are a non-profit organization and are need of small projects
-        being done, then contact us directly or please fill out the form to get
-        your project on the website. We will not be handling communication
-        between the organization and the Scout. After posting on this website,
-        all communication falls between the Scout and the Organization. After
-        confirmation of the project please contact us to remove your posting
-        from our site.
-      </p>
-    </p-card>
-  </div>
-
-  <div class="postsParent">
-    <h2>Posts</h2>
-
-    <div class="postsVirtualScrollContainer">
-      <div *ngIf="loading" class="loading-item">Loading...</div>
-    </div>
-
-    <form [formGroup]="filterForm" class="filterContainer">
-      <p-multiSelect
-        [options]="categories"
-        formControlName="category"
-        optionLabel="name"
-        placeholder="Select Categories"
+<div class="first-banner">
+  <p-card
+    class="custom-card"
+    [style]="{
+      'min-height': '100%',
+      width: '25vw',
+      padding: '2rem',
+      borderRadius: '25px',
+    }"
+  >
+    <ng-template pTemplate="header">
+      <img
+        style="height: 35vh"
+        alt="Card"
+        src="../../assets/images/projectfindericons/search.png"
       />
+      <h2 class="header-text" style="margin: 0; text-align: center">
+        What is the Project Finder?
+      </h2>
+    </ng-template>
+    <p class="body-text" style="margin: 0; text-align: center">
+      Here local organizations have posted projects that they have deemed within
+      the scope of an Eagle Project. The goal is to improve the community by
+      bridging the gap between non-profit organizations that need resources and
+      prospective Eagle Scouts who need to earn their ranks. A win-win situation
+      where both benefit.
+    </p>
+  </p-card>
 
-      <p-inputMask
-        mask="99999"
-        formControlName="zipcode"
-        placeholder="Zip Code"
+  <p-card
+    class="custom-card"
+    [style]="{
+      'min-height': '100%',
+      width: '25vw',
+      padding: '2rem',
+      borderRadius: '25px',
+    }"
+  >
+    <ng-template pTemplate="header">
+      <img
+        style="height: 35vh"
+        alt="Card"
+        src="../../assets/images/projectfindericons/communicate.png"
       />
+      <h2 class="header-text" style="margin: 0; text-align: center">
+        As a Scout, How should I use this?
+      </h2>
+    </ng-template>
+    <p class="body-text" style="margin: 0; text-align: center">
+      This will simplify the process of picking your project. These are not
+      final projects, but simply a starting guide for a particular idea and
+      organization. Your next steps will be to reach out as the Scout and move
+      further along the process. All we have done here is make it easier finding
+      the organizations.
+    </p>
+  </p-card>
 
-      <p style="font-size: 1.2rem">Radius: {{ radius }} Miles</p>
-      <p-slider
-        formControlName="radius"
-        [min]="5"
-        [max]="50"
-        class="w-full"
-        [step]="5"
-      ></p-slider>
+  <p-card
+    class="custom-card"
+    [style]="{
+      'min-height': '100%',
+      width: '25vw',
+      padding: '2rem',
+      borderRadius: '25px',
+    }"
+  >
+    <ng-template pTemplate="header">
+      <img
+        style="height: 35vh"
+        alt="Card"
+        src="../../assets/images/projectfindericons/construction.png"
+      />
+      <h2 class="header-text" style="margin: 0; text-align: center">
+        As an Organization, How should I use this?
+      </h2>
+    </ng-template>
+    <p class="body-text" style="margin: 0; text-align: center">
+      If you are a non-profit organization and are need of small projects being
+      done, then contact us directly or please fill out the form to get your
+      project on the website. We will not be handling communication between the
+      organization and the Scout. After posting on this website, all
+      communication falls between the Scout and the Organization. After
+      confirmation of the project please contact us to remove your posting from
+      our site.
+    </p>
+  </p-card>
+</div>
 
-      <div style="width: 100%; display: flex; justify-content: space-evenly">
-        <p-button pRipple label="Submit" (click)="loadPosts()" />
-        <p-button pRipple label="Reset" (click)="onResetFilter()" />
-      </div>
-    </form>
-  </div>
+<button (click)="testPaginatedPosts()">Test Paginated Posts</button>
 
-  <div class="posts">
-    <div class="postContainer" style="width: 100%; margin: 0 auto">
-      <div
-        *ngFor="let postRow of posts"
-        style="display: flex; justify-content: space-evenly; width: 100%"
-      >
-        <div *ngFor="let post of postRow">
-          <p-card
-            [style]="{
-              width: '25vw',
-              borderRadius: '3rem',
-              padding: '1rem',
-              marginBottom: '10vh',
-            }"
-          >
-            <ng-template pTemplate="header">
-              <p-galleria
-                [value]="post.images"
-                [circular]="true"
-                [showItemNavigators]="true"
-                [showThumbnails]="false"
-                [containerStyle]="{}"
-              >
-                <ng-template pTemplate="item" let-item>
-                  <img
-                    [src]="item.urlProperty"
-                    style="width: 100%; display: block"
-                  />
-                </ng-template>
-              </p-galleria>
+<h2 class="postHeader">Project Posts</h2>
 
-              <div style="display: flex; justify-content: space-between">
-                <p class="postHeader">{{ post.title }}</p>
-                <p-chip
-                  [style]="{
-                    backgroundColor: getCategoryData(post.category).color,
-                  }"
-                >
-                  <span class="material-icons">{{
-                    getCategoryData(post.category).icon
-                  }}</span>
-                  <span style="margin-left: 0.5rem; margin-right: 0.5rem">{{
-                    post.category
-                  }}</span>
-                </p-chip>
-              </div>
-
-              <p class="orgNameAndAddress">
-                {{ post.organization?.name }} | {{ post.organization?.street }},
-                {{ post.organization?.city }}, {{ post.organization?.state }},
-                {{ post.organization?.zipcode }}
-              </p>
-            </ng-template>
-
-            <p class="description">
-              {{ post.description }}
-            </p>
-
-            <ng-template pTemplate="footer">
-              <p-button pRipple label="Learn More" />
-            </ng-template>
-          </p-card>
-        </div>
-
-        <div></div>
+<div class="postsParent">
+  <div
+    class="postsVirtualScrollContainer"
+    infiniteScroll
+    [infiniteScrollDistance]="2"
+    [infiniteScrollThrottle]="50"
+    (scrolled)="loadPosts()"
+    [scrollWindow]="false"
+  >
+    <div class="posts-row" *ngFor="let row of posts | chunk: 2">
+      <div *ngFor="let post of row" class="post-item">
+        <app-post [post]="post"></app-post>
       </div>
     </div>
   </div>
+
+  <form [formGroup]="filterForm" class="filterContainer">
+    <p-multiSelect
+      [options]="categories"
+      formControlName="category"
+      optionLabel="name"
+      placeholder="Select Categories"
+    />
+
+    <p-inputMask
+      mask="99999"
+      formControlName="zipcode"
+      placeholder="Zip Code"
+    />
+
+    <p style="font-size: 1.2rem">Radius: {{ radius }} Miles</p>
+    <p-slider
+      formControlName="radius"
+      [min]="5"
+      [max]="50"
+      class="w-full"
+      [step]="5"
+    ></p-slider>
+
+    <div style="width: 100%; display: flex; justify-content: space-evenly">
+      <p-button pRipple label="Submit" (click)="loadPosts(true)" />
+      <p-button pRipple label="Reset" (click)="onResetFilter()" />
+    </div>
+  </form>
 </div>

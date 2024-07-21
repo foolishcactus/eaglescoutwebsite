@@ -58,101 +58,10 @@
 .first-banner {
   margin-top: 10vh;
   margin-bottom: 10vh;
+  width: 100%;
   display: flex;
   justify-content: space-around;
   align-items: stretch;
-}
-
-:host ::ng-deep .p-galleria-item-container img {
-  width: 100%;
-  height: 33vh;
-  border-top-left-radius: 3rem;
-  border-top-right-radius: 3rem;
-  border-radius: 3rem;
-  transition:
-    transform 0.3s,
-    box-shadow 0.3s; /* Smooth transition for the hover effect */
-}
-
-:host ::ng-deep .p-galleria-item-container img:hover {
-  box-shadow:
-    rgba(0, 0, 0, 0.25) 0px 54px 55px,
-    rgba(0, 0, 0, 0.12) 0px -12px 30px,
-    rgba(0, 0, 0, 0.12) 0px 4px 6px,
-    rgba(0, 0, 0, 0.17) 0px 12px 13px,
-    rgba(0, 0, 0, 0.09) 0px -3px 5px;
-}
-
-:host ::ng-deep .p-chip {
-  padding: 0.5rem;
-  margin-top: 3rem;
-  margin-bottom: 0;
-  transition:
-    transform 0.3s,
-    box-shadow 0.3s; /* Smooth transition for the hover effect */
-}
-
-:host ::ng-deep .p-chip:hover {
-  box-shadow: rgba(17, 12, 46, 0.15) 0px 48px 100px 0px;
-}
-
-.postHeader {
-  font-family: Helvetica, sans-serif;
-  font-weight: 600;
-  font-size: 3.2rem;
-  color: black;
-  margin-top: 3rem;
-  margin-bottom: 0;
-}
-
-.categoryText {
-  font-family: Helvetica, sans-serif;
-  font-weight: 500;
-  color: #ef4443;
-  font-size: 1.2rem;
-}
-
-.orgNameAndAddress {
-  font-family: Helvetica, sans-serif;
-  font-weight: 400;
-  font-size: 1.2rem;
-  color: gray;
-  margin-top: 1rem;
-  margin-bottom: 0;
-}
-
-.description {
-  font-family: Helvetica, sans-serif;
-  font-weight: 500;
-  color: black;
-  font-size: 1.6rem;
-  margin-top: 1rem;
-}
-
-:host ::ng-deep .p-button {
-  width: 100%;
-  padding: 1rem;
-  border-radius: 1rem;
-  background-color: #003366;
-  border-color: transparent;
-
-  transition:
-    transform 0.3s,
-    box-shadow 0.3s; /* Smooth transition for the hover effect */
-}
-
-:host ::ng-deep .p-button:hover {
-  box-shadow:
-    rgba(0, 0, 0, 0.25) 0px 54px 55px,
-    rgba(0, 0, 0, 0.12) 0px -12px 30px,
-    rgba(0, 0, 0, 0.12) 0px 4px 6px,
-    rgba(0, 0, 0, 0.17) 0px 12px 13px,
-    rgba(0, 0, 0, 0.09) 0px -3px 5px;
-}
-
-:host ::ng-deep .p-button-label {
-  font-size: 1.6rem;
-  color: white;
 }
 
 .filterContainer {
@@ -173,15 +82,6 @@
   width: 100%;
   color: white;
   margin-bottom: 3rem;
-}
-
-:host ::ng-deep .p-icon-field input {
-  width: 40vw;
-  color: black;
-  border-radius: 1rem;
-  padding: 1rem;
-  font-size: 1.6rem;
-  padding-left: 2rem;
 }
 
 :host ::ng-deep .p-multiselect {
@@ -208,20 +108,37 @@
   width: 5vw;
 }
 
-.posts {
-  width: 100vw;
-  display: flex;
-  flex-direction: row;
-  justify-content: space-between;
+.postHeader {
+  font-size: 5.6rem;
+  margin: 0 auto;
   background-color: #fefefe;
+  width: 100%;
+  text-align: center;
   padding: 10rem;
 }
 
-.posts h2 {
-  font-size: 4.8rem;
+.postsParent {
+  width: 100%;
+  height: 100vh;
+  background-color: #fefefe;
+  padding-left: 10rem;
+  padding-right: 10rem;
+  padding-bottom: 10rem;
+  display: flex;
+  flex-direction: row;
 }
 
-.postContainer {
-  width: 100%;
-  margin: 0 auto;
+.postsVirtualScrollContainer {
+  height: 100%; /* Set this to the desired height */
+  overflow: auto;
+  flex: 5;
+}
+
+.filterContainer {
+  flex: 1;
+}
+
+.posts-row {
+  display: flex;
+  justify-content: space-evenly;
 }

@@ -248,19 +248,17 @@ export class FirebaseService {
       this.functions,
       'getPostsWithPagination',
     );
+    console.log('We are in the firebase service about to build the function.');
     const dataPacket = {
       limit: limit,
-      startAfter: startAfter,
-      filterCriteria: filterCriteria,
+      startAfter: startAfter || null,
+      filterCriteria: filterCriteria || null,
     };
     const returnVal = await getPostsWithPagination(dataPacket);
     const functionReturnPacket: FunctionReturnPacket =
       returnVal.data as FunctionReturnPacket;
     console.log(functionReturnPacket.message);
-    console.log(
-      'This is the value of the data we received from firebase ' +
-        JSON.stringify(functionReturnPacket.data),
-    );
+    console.log(functionReturnPacket.data);
     return functionReturnPacket.data;
   }
 
