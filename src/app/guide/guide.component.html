@@ -25,47 +25,9 @@
 </div>
 
 <div class="main-container">
-  <div class="sticky-toc">
-    <div class="progress-container">
-      <div class="progress-bar" [style.height.%]="scrollProgress"></div>
-    </div>
-
-    <div>
-      <ng-container *ngFor="let item of tocItems">
-        <p
-          *ngIf="!item.sub"
-          class="toc-heading"
-          (click)="scrollToSection(item.id)"
-          [class.active]="item.isActive"
-        >
-          {{ item.title }}
-        </p>
-
-        <ng-container *ngIf="item.sub">
-          <p
-            class="toc-heading"
-            [class.active]="item.isActive"
-            (click)="scrollToSection(item.id)"
-          >
-            {{ item.title }}
-          </p>
-          <ng-container *ngFor="let subItem of item.sub">
-            <p
-              class="toc-subheading"
-              (click)="scrollToSection(subItem.id)"
-              [class.active]="subItem.isActive"
-            >
-              {{ subItem.title }}
-            </p>
-          </ng-container>
-        </ng-container>
-      </ng-container>
-    </div>
-  </div>
-
-  <div style="grid-column: 1 / 2; grid-row: 1">
-    <div id="requirement5" style="margin-bottom: 7rem">
-      <p class="header-text">Requirement 5</p>
+  <div id="guideContent" #guideContent class="guideContent">
+    <div style="margin-bottom: 7rem">
+      <p id="requirement5" class="header-text">Requirement 5</p>
       <p class="body-text">
         While a Life Scout, plan, develop, and give leadership to others in a
         service project helpful to any religious institution, any school, or
@@ -82,8 +44,8 @@
 
     <p-divider styleClass="p-divider" />
 
-    <div id="pickingaproject" style="margin-top: 7rem; margin-bottom: 7rem">
-      <p class="header-text">Picking A Project</p>
+    <div style="margin-top: 7rem; margin-bottom: 7rem">
+      <p id="pickingaproject" class="header-text">Picking A Project</p>
 
       <p class="body-text">
         Think about what you enjoy doing and where your skills lie. Choosing a
@@ -127,8 +89,8 @@
 
     <p-divider styleClass="p-divider" />
 
-    <div id="research" style="margin-bottom: 7rem">
-      <p class="header-text">Research</p>
+    <div style="margin-bottom: 7rem">
+      <p class="header-text" id="research">Research</p>
       <p class="body-text">
         Before beginning planning your project or filling out the project
         workbook make sure to go and do you research for the project you want to
@@ -149,8 +111,8 @@
 
     <p-divider styleClass="p-divider" />
 
-    <div id="part1" style="margin-bottom: 7rem">
-      <p class="header-text">Part 1</p>
+    <div style="margin-bottom: 7rem">
+      <p id="part1" class="header-text">Part 1</p>
       <p class="body-text">
         Start by downloading the <a>Eagle Scout Project Workbook</a> and filling
         out Part 1. This will be lengthy and is important to gettting all of the
@@ -329,5 +291,41 @@
     </div>
 
     <p-divider styleClass="p-divider" />
+  </div>
+
+  <div class="spacer"></div>
+
+  <div class="sticky-toc">
+    <div>
+      <ng-container *ngFor="let item of tocItems">
+        <p
+          *ngIf="!item.sub"
+          class="toc-heading"
+          (click)="scrollToSection(item.id)"
+          [class.active]="item.isActive"
+        >
+          {{ item.title }}
+        </p>
+
+        <ng-container *ngIf="item.sub">
+          <p
+            class="toc-heading"
+            [class.active]="item.isActive"
+            (click)="scrollToSection(item.id)"
+          >
+            {{ item.title }}
+          </p>
+          <ng-container *ngFor="let subItem of item.sub">
+            <p
+              class="toc-subheading"
+              (click)="scrollToSection(subItem.id)"
+              [class.active]="subItem.isActive"
+            >
+              {{ subItem.title }}
+            </p>
+          </ng-container>
+        </ng-container>
+      </ng-container>
+    </div>
   </div>
 </div>
