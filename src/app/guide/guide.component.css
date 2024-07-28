@@ -14,7 +14,7 @@ body {
   position: absolute;
   width: 100%;
   height: 100%;
-  background: url("../../assets/images/landingImages/projectbackground.jpg")
+  background: url("https://firebasestorage.googleapis.com/v0/b/eaglescoutwebsite.appspot.com/o/assets%2Fprojectbackground.jpg?alt=media&token=00b7123d-0b2c-4bc6-ae3f-28eebccb4bf0")
     no-repeat center center;
   background-size: cover;
   transform: scale(1);
