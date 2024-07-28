@@ -6,6 +6,7 @@ import { ProjectfinderComponent } from './projectfinder/projectfinder.component'
 import { ApplyComponent } from './apply/apply.component';
 import { LoginComponent } from './login/login.component';
 import { UserDashboardComponent } from './user-dashboard/user-dashboard.component';
+import { PasswordresetComponent } from './passwordreset/passwordreset.component';
 
 export const routes: Routes = [
   { path: '', component: HomeComponent },
@@ -16,4 +17,5 @@ export const routes: Routes = [
   { path: 'apply', component: ApplyComponent },
   { path: 'login', component: LoginComponent },
   { path: 'user-dashboard', component: UserDashboardComponent },
+  { path: 'passwordreset', component: PasswordresetComponent },
 ];

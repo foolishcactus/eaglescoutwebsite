@@ -1,19 +1,81 @@
 /* eslint-disable */
 //firebase deploy --only functions
 import { initializeApp } from 'firebase-admin/app';
+import { getAuth } from 'firebase-admin/auth';
 import { logger } from 'firebase-functions';
 //import { onDocumentCreated } from "firebase-functions/v2/firestore";
 import { getFirestore, FieldValue } from 'firebase-admin/firestore';
 import { onCall } from 'firebase-functions/v2/https';
+import { onDocumentUpdated } from 'firebase-functions/v2/firestore';
+import { createClient } from '@usewaypoint/client';
 
 // Initialize Firebase Admin SDK
 
 //var serviceAccount = require("C:/Users/egumu/Documents/eaglescoutwebsite-firebase-adminsdk-k5rmp-d8e05ddb7c.json");
 initializeApp();
 const db = getFirestore();
+
+//This is the client for the waypoint email, turn on once we decide to implment this.
+//const client = createClient(
+//  '667f5d604d0f8a0d83eed62c',
+//  'bjgEkzCaeuTzPQJHYZt9wnTY',
+//);
+const auth = getAuth();
 //{ cors: 'http://localhost:4200' }
 
 //READ FUNCTIONS
+exports.verifyOrganization = onDocumentUpdated(
+  'organizations/{email}',
+  async (event: any) => {
+    const newValue = event.data.after.data();
+    const previousValue = event.data.before.data();
+
+    // Only trigger if isVerified changes from false to true
+    if (previousValue.isVerified === false && newValue.isVerified === true) {
+      logger.log('Organization verified:', newValue.email);
+
+      try {
+        // Create a user account with Firebase Authentication
+        const userRecord = await auth.createUser({
+          email: newValue.email,
+          emailVerified: false,
+          password: 'temporaryPassword123', // Set a temporary password
+          displayName: newValue.organizationname,
+          disabled: false,
+        });
+
+        logger.log('User created successfully:', userRecord.uid);
+
+        // Generate password reset link
+        const resetLink = await auth.generatePasswordResetLink(newValue.email);
+
+        logger.log('Password reset link generated:', resetLink);
+
+        // Send the reset link email using Waypoint template
+
+        //This would be for the waypoint template once this grows for an automated system.
+        //await client.emailMessages.createTemplated({
+        //  templateId: 'wptemplate_XqtPZL5jFbMg7ZzY',
+        //  to: newValue.email,
+        //  variables: {
+        //    url: resetLink,
+        //  },
+        //});
+
+        logger.log(
+          'Password reset email sent successfully to:',
+          newValue.email,
+        );
+      } catch (error) {
+        logger.error(
+          'Error creating user or sending password reset email:',
+          error,
+        );
+      }
+    }
+  },
+);
+
 exports.getPostsWithPagination = onCall(async (request) => {
   try {
     const { limit, startAfter, filterCriteria } = request.data;

@@ -1,12 +1,5 @@
-<p-card
-  [style]="{
-    width: '25vw',
-    borderRadius: '3rem',
-    padding: '1rem',
-    marginBottom: '10vh',
-  }"
->
-  <ng-template pTemplate="header">
+<div class="card" style="display: flex; align-items: center">
+  <div style="flex: 2">
     <p-galleria
       [value]="post.images"
       [circular]="true"
@@ -15,12 +8,18 @@
       [containerStyle]="{}"
     >
       <ng-template pTemplate="item" let-item>
-        <img [src]="item.urlProperty" style="width: 100%; display: block" />
+        <img [src]="item.urlProperty" style="width: 100%" />
       </ng-template>
     </p-galleria>
-
-    <div style="display: flex; justify-content: space-between">
+  </div>
+  <div style="flex: 0.5"></div>
+  <div class="content" style="display: flex; flex-direction: column; flex: 5">
+    <div
+      class="headerSection"
+      style="display: flex; width: 100%; justify-content: space-between"
+    >
       <p class="postHeader">{{ post.title }}</p>
+
       <p-chip
         [style]="{
           backgroundColor: getCategoryData(post.category).color,
@@ -40,13 +39,11 @@
       {{ post.organization?.city }}, {{ post.organization?.state }},
       {{ post.organization?.zipcode }}
     </p>
-  </ng-template>
 
-  <p class="description">
-    {{ post.description }}
-  </p>
+    <p class="description">
+      {{ post.description }}
+    </p>
 
-  <ng-template pTemplate="footer">
     <p-button pRipple label="Learn More" />
-  </ng-template>
-</p-card>
+  </div>
+</div>

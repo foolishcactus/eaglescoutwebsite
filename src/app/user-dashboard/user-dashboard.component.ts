@@ -11,6 +11,7 @@ import { ConfirmDialogModule } from 'primeng/confirmdialog';
 import { ConfirmationService } from 'primeng/api';
 import { Post } from '../post';
 import { ToastService } from '../toast.service';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-user-dashboard',
@@ -65,6 +66,7 @@ export class UserDashboardComponent {
     public dialogService: DialogService,
     private confirmationService: ConfirmationService,
     private toastService: ToastService,
+    private router: Router,
   ) {
     this.currentUser = this.firebaseService.getCurrentUser();
   }
@@ -107,6 +109,7 @@ export class UserDashboardComponent {
 
   logout() {
     this.firebaseService.logout();
+    this.router.navigate(['/']);
   }
 
   async getDataForSignedInOrganization() {
@@ -118,6 +121,10 @@ export class UserDashboardComponent {
           });
 
         this.numOfActivePosts = this.currentOrganization.numOfActivePosts;
+        console.log(
+          'This is the number of active posts being intialized: ' +
+            this.numOfActivePosts,
+        );
       }
     } catch (error) {
       console.error('Error fetching organization:', error);
@@ -169,6 +176,7 @@ export class UserDashboardComponent {
   }
 
   async deletePost(postToDelete: Post) {
+    console.log('We are deleting a document.');
     let deleteFromFirebaseIsSuccessful: boolean =
       await this.firebaseService.deletePost(postToDelete);
 
@@ -192,11 +200,11 @@ export class UserDashboardComponent {
             JSON.stringify(this.organizationPosts[i]),
         );
         this.organizationPosts.splice(i, 1);
-        return;
       }
     }
 
     this.numOfActivePosts -= 1;
+
     console.log(
       'This is the numOfActive Posts now after deleting' +
         this.numOfActivePosts,

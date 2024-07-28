@@ -6,7 +6,7 @@ import {
   ReactiveFormsModule,
   Validators,
 } from '@angular/forms';
-import { Router } from '@angular/router';
+import { Router, RouterLink } from '@angular/router';
 
 import { ButtonModule } from 'primeng/button';
 import { InputGroupModule } from 'primeng/inputgroup';
@@ -33,6 +33,7 @@ import { FirebaseService } from '../firebase.service';
     InputGroupAddonModule,
     InputGroupModule,
     CarouselModule,
+    RouterLink,
   ],
   providers: [],
   templateUrl: './login.component.html',

@@ -1,7 +1,7 @@
 //USING MODULAR FIREBASE SDKS, SO YOU MUST IMPORT ALL NEEDED IMPORTS
 
 import { Injectable } from '@angular/core';
-import { Observable, from, map, BehaviorSubject } from 'rxjs';
+import { Observable, map, BehaviorSubject } from 'rxjs';
 
 import { initializeApp, FirebaseApp } from 'firebase/app';
 import {
@@ -10,6 +10,7 @@ import {
   User,
   signOut,
   onAuthStateChanged,
+  sendPasswordResetEmail,
 } from 'firebase/auth';
 import { httpsCallable, getFunctions } from 'firebase/functions';
 import {
@@ -65,6 +66,16 @@ export class FirebaseService {
 
   logout() {
     return signOut(this.auth);
+  }
+
+  sendPasswordReset(email: string) {
+    sendPasswordResetEmail(this.auth, email)
+      .then(() => {
+        console.log('Password Reset message sent');
+      })
+      .catch(() => {
+        console.log('There was an error');
+      });
   }
 
   //Returns the status of being logged in. True if there is some user logged in. False if there's no user logged in

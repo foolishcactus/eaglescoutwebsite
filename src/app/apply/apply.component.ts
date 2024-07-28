@@ -18,6 +18,7 @@ import { InputMaskModule } from 'primeng/inputmask';
 
 import { FirebaseService } from '../firebase.service';
 import { Organization } from '../organization';
+import { ToastService } from '../toast.service';
 
 @Component({
   selector: 'app-apply',
@@ -96,6 +97,7 @@ export class ApplyComponent {
   constructor(
     private fb: FormBuilder,
     private fireBaseService: FirebaseService,
+    private toastService: ToastService,
   ) {
     console.log(this.states.length);
     this.applyForm = this.fb.group({
@@ -127,14 +129,29 @@ export class ApplyComponent {
       this.fireBaseService
         .addOrganization(organizationData)
         .then((messgage) => {
+          this.toastService.showSuccess(
+            'Form Submitted',
+            'Submission was successful, you will receive an email to set your password once you have been manually verified. Can take up to 2 days.',
+          );
+          this.applyForm.reset();
           console.log(
             'Adding organization was success here is the return:' +
               JSON.stringify(messgage),
           );
         })
         .catch((error: any) => {
+          this.toastService.showError(
+            'Form Submission Unsuccessful.',
+            'Try again. ',
+          );
+          this.applyForm.reset();
           console.log('We cannot get this thing to work');
         });
+    } else {
+      this.toastService.showError(
+        'Form Submission Unsuccessful.',
+        'Please fill in all components. ',
+      );
     }
   }
 }

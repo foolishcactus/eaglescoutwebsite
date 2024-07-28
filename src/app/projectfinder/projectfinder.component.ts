@@ -177,51 +177,6 @@ export class ProjectfinderComponent {
     );
   }
 
-  async testPaginatedPosts() {
-    const filterCriteria = {
-      category: [{ name: 'Construction' }, { name: 'Environmental' }], // Example categories
-      zipcode: 32773,
-      radius: 30,
-      lat: 28.7406, // Example latitude
-      long: -81.274948, // Example longitude
-    };
-
-    try {
-      // Fetch the first set of posts with filter criteria
-      const firstSet = await this.firebaseService.getPostsWithPagination(
-        3,
-        undefined,
-        filterCriteria,
-      );
-      console.log('First set of filtered posts:', firstSet.data);
-
-      // Check if we have posts
-      console.log('we are about to test');
-      if (firstSet.data.length > 0) {
-        console.log(
-          'We are trying to get the second set of filtered posts now.',
-        );
-        // Use the ID of the last post from the first set as the startAfter parameter
-        const lastVisible = firstSet.data[firstSet.data.length - 1];
-        console.log('This is the last visible value:', lastVisible);
-        console.log('This is the last visible id:', lastVisible.id);
-
-        // Fetch the next set of posts using startAfter and filter criteria
-        const nextSet = await this.firebaseService.getPostsWithPagination(
-          3,
-          lastVisible.id,
-          filterCriteria,
-        );
-        console.log('Next set of filtered posts:', nextSet.data);
-      }
-    } catch (error) {
-      console.error(
-        'Error fetching paginated posts with filter criteria:',
-        error,
-      );
-    }
-  }
-
   //Transforming Images array into an array of objects that have a property of urlProperty with the originial string to fit the constraints of PRIME NG galleria template
   transformPostImages(posts: any[]): any[] {
     posts.forEach((post) => {
