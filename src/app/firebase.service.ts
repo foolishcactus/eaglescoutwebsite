@@ -44,17 +44,9 @@ export class FirebaseService {
 
   constructor() {
     // Listen to authentication state changes
-    console.log(
-      'This is the current user as we build the service:' +
-        this.auth.currentUser,
-    );
     this.currentUserSubject.next(this.auth.currentUser);
 
     onAuthStateChanged(this.auth, (user) => {
-      console.log(
-        'The user value has now changed. This is the new current user:' +
-          this.auth.currentUser?.email,
-      );
       this.currentUserSubject.next(user); // Update the BehaviorSubject with the new user
     });
   }

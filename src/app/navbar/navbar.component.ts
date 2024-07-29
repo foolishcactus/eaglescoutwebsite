@@ -27,7 +27,6 @@ export class NavbarComponent {
   ngOnInit() {
     this.primengConfig.ripple = true;
     this.firebaseService.isLoggedIn$().subscribe((loginStatus) => {
-      console.log('This is if we are still logged in or not' + loginStatus);
       this.isLoggedIn = loginStatus;
     });
   }
