@@ -7,7 +7,7 @@ import { logger } from 'firebase-functions';
 import { getFirestore, FieldValue } from 'firebase-admin/firestore';
 import { onCall } from 'firebase-functions/v2/https';
 import { onDocumentUpdated } from 'firebase-functions/v2/firestore';
-import { createClient } from '@usewaypoint/client';
+//import { createClient } from '@usewaypoint/client';
 
 // Initialize Firebase Admin SDK
 

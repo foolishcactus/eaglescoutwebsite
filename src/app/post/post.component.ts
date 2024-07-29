@@ -23,9 +23,7 @@ export class PostComponent {
     Other: { icon: 'miscellaneous_services', color: '#fa8739' },
   };
 
-  constructor() {
-    console.log('This is the post we have ' + JSON.stringify(this.post));
-  }
+  constructor() {}
 
   ngOnInit() {}
 

@@ -85,6 +85,13 @@ export class ProjectfinderComponent {
   }
 
   async loadPosts(withFilters?: boolean) {
+    if (!this.filterForm.valid && withFilters) {
+      this.toastService.showError(
+        'Error',
+        'Please fill out entire filter form.',
+      );
+      return;
+    }
     let tempPosts: Post[] = [];
 
     try {

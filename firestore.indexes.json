@@ -1,13 +1,27 @@
 {
-  "indexes": [{
-    "collectionGroup": "posts",
-    "queryScope": "COLLECTION",
-    "fields": [
-      { "fieldPath": "lat", "order": "ASCENDING" },
-      { "fieldPath": "long", "order": "ASCENDING" },
-      { "fieldPath": "category", "order": "ASCENDING" },
-      { "fieldPath": "__name__", "order": "ASCENDING" }
-    ]
-  }],
+  "indexes": [
+    {
+      "collectionGroup": "posts",
+      "queryScope": "COLLECTION",
+      "fields": [
+        {
+          "fieldPath": "category",
+          "order": "ASCENDING"
+        },
+        {
+          "fieldPath": "createdAt",
+          "order": "ASCENDING"
+        },
+        {
+          "fieldPath": "lat",
+          "order": "ASCENDING"
+        },
+        {
+          "fieldPath": "long",
+          "order": "ASCENDING"
+        }
+      ]
+    }
+  ],
   "fieldOverrides": []
 }
